@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Materi Pembelajaran | Planet-Learning</title>
+    <title>Pusat Belajar Tata Surya | Planet-Learning</title>
     <!-- Google Fonts Playful & Kartun -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
+    <!-- Confetti untuk Perayaan Skor Kuis -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <style>
         :root {
             --cartoon-dark: #1e1b4b;
@@ -42,7 +44,8 @@
             background: radial-gradient(circle at 50% 20%, #311b92 0%, #150f42 55%, #090524 100%);
             color: #ffffff;
             position: relative;
-            padding-bottom: 30px;
+            min-height: 100vh;
+            padding-bottom: 25px;
         }
 
         /* ===== BACKGROUND VIDEO & STARS ===== */
@@ -77,7 +80,7 @@
             100% { opacity: 1; transform: scale(1.2); }
         }
 
-        /* ===== NAVBAR KHUSUS HP ===== */
+        /* ===== NAVBAR RAPI UNTUK HP ===== */
         header {
             position: fixed;
             top: 12px;
@@ -141,7 +144,7 @@
             box-shadow: none;
         }
 
-        /* Drawer Menu HP */
+        /* Mobile Menu Drawer */
         .mobile-drawer {
             display: none;
             position: fixed;
@@ -187,9 +190,7 @@
             border-radius: 16px;
             box-shadow: 0 3px 0 var(--cartoon-dark);
         }
-        .drawer-box a.active {
-            background: var(--cartoon-yellow);
-        }
+        .drawer-box a.active { background: var(--cartoon-yellow); }
         .btn-close-drawer {
             margin-top: 6px;
             background: var(--cartoon-pink);
@@ -203,81 +204,180 @@
             box-shadow: 0 3px 0 var(--cartoon-dark);
         }
 
-        /* ===== KONTEN MATERI PEMBELAJARAN ===== */
-        .materi-section {
+        /* ===== CONTENT WRAPPER ===== */
+        .content-page {
             padding: 85px 16px 40px;
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
         }
 
-        .header-title {
+        .page-header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 22px;
         }
-        .header-tag {
-            display: inline-block;
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             background: var(--cartoon-pink);
-            color: #fff;
-            padding: 4px 14px;
-            border-radius: 20px;
+            color: #ffffff;
+            padding: 5px 16px;
+            border-radius: 30px;
             font-family: 'Fredoka One', cursive;
-            font-size: 0.8rem;
-            border: 2px solid var(--cartoon-dark);
+            font-size: 0.85rem;
+            border: 2.5px solid var(--cartoon-dark);
             box-shadow: var(--comic-shadow-sm);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
-        .header-title h1 {
+        .page-header h1 {
             font-family: 'Fredoka One', cursive;
-            font-size: 2rem;
+            font-size: 2.1rem;
             color: #ffffff;
             text-shadow: 
                 -2px -2px 0 var(--cartoon-dark),
                  2px -2px 0 var(--cartoon-dark),
                 -2px  2px 0 var(--cartoon-dark),
                  2px  2px 0 var(--cartoon-dark),
-                 0 5px 0 var(--cartoon-dark);
-            letter-spacing: 0.5px;
+                 0 6px 0 var(--cartoon-dark);
+            margin-bottom: 6px;
         }
-        .header-title p {
-            color: var(--cartoon-yellow);
-            font-size: 0.9rem;
+        .page-header p {
+            font-size: 0.95rem;
             font-weight: 800;
-            margin-top: 4px;
-            text-shadow: 1px 1px 0 var(--cartoon-dark);
+            color: #e0e7ff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+            line-height: 1.45;
         }
 
-        /* DAFTAR KARTU MATERI */
-        .materi-list {
+        /* TOMBOL KEMBALI */
+        .sub-nav-bar {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 18px;
+        }
+        .back-menu-btn {
+            background: #ffffff;
+            color: var(--cartoon-dark);
+            border: 2.5px solid var(--cartoon-dark);
+            border-radius: 30px;
+            padding: 8px 18px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.9rem;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .back-menu-btn:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .view-section {
+            display: none;
+            animation: viewSlide 0.3s ease;
+        }
+        .view-section.active { display: block; }
+        @keyframes viewSlide {
+            from { opacity: 0; transform: translateY(12px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ===== 1. SCREEN 0: 3 MENU UTAMA BESAR ===== */
+        .big-menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 10px;
+        }
+        .big-menu-card {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 26px;
+            padding: 24px 18px 20px;
+            text-align: center;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .big-menu-card::before {
+            content: '';
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; height: 20px;
+            border-radius: 22px 22px 0 0;
+            border: var(--comic-border);
+            border-bottom: none;
+        }
+        .menu-materi::before { background: var(--cartoon-cyan); }
+        .menu-kuis::before { background: var(--cartoon-pink); }
+        .menu-bandingkan::before { background: var(--cartoon-yellow); }
+
+        .big-menu-card:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 var(--cartoon-dark);
+        }
+        .big-menu-icon {
+            font-size: 3.5rem;
+            margin: 4px 0 8px;
+            line-height: 1;
+        }
+        .big-menu-card h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.45rem;
+            color: var(--cartoon-dark);
+            margin-bottom: 6px;
+        }
+        .big-menu-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+        .menu-action-badge {
+            background: var(--cartoon-yellow);
+            color: var(--cartoon-dark);
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 25px;
+            padding: 9px 20px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.95rem;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            width: 100%;
+            display: inline-block;
+        }
+        .menu-kuis .menu-action-badge { background: var(--cartoon-pink); color: #fff; }
+        .menu-materi .menu-action-badge { background: var(--cartoon-cyan); color: var(--cartoon-dark); }
+
+        /* ===== 2. SCREEN 1: KONTEN MATERI (8 KARTU LENGKAP) ===== */
+        .materi-grid {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
-
         .materi-card {
             background: #ffffff;
             border: var(--comic-border);
             border-radius: 22px;
-            padding: 18px 16px;
+            padding: 16px 14px;
             box-shadow: 0 6px 0 var(--cartoon-dark);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            transition: transform 0.15s ease;
         }
-        .materi-card:active {
-            transform: translateY(2px);
-            box-shadow: 0 4px 0 var(--cartoon-dark);
-        }
-
-        /* Garis Warna di Bagian Atas Tiap Kartu */
         .card-stripe {
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 8px;
+            height: 7px;
         }
         .stripe-purple { background: var(--cartoon-purple); }
         .stripe-yellow { background: var(--cartoon-yellow); }
@@ -287,28 +387,24 @@
         .stripe-cyan { background: var(--cartoon-cyan); }
         .stripe-green { background: var(--cartoon-green); }
 
-        .card-top {
+        .card-header {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-top: 4px;
         }
-
         .card-icon {
             font-size: 1.8rem;
             line-height: 1;
             flex-shrink: 0;
         }
-
         .card-title {
             font-family: 'Fredoka One', cursive;
-            font-size: 1.25rem;
+            font-size: 1.22rem;
             color: var(--cartoon-dark);
-            line-height: 1.2;
         }
-
         .card-body {
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #334155;
             line-height: 1.55;
@@ -318,8 +414,6 @@
             border: 2px dashed #cbd5e1;
             text-align: justify;
         }
-
-        /* Urutan Planet Visual Guide */
         .planet-order-chain {
             display: flex;
             flex-wrap: wrap;
@@ -332,243 +426,766 @@
             padding: 4px 8px;
             border-radius: 12px;
             font-family: 'Fredoka One', cursive;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             color: var(--cartoon-dark);
             display: inline-flex;
             align-items: center;
-            gap: 3px;
+            gap: 2px;
         }
 
-        /* Navigasi Balik / Lanjut */
-        .bottom-action {
-            display: flex;
-            gap: 10px;
-            margin-top: 24px;
-            justify-content: center;
+        /* ===== 3. SCREEN 2: KUIS INTERAKTIF (15 SOAL) ===== */
+        .quiz-box-card {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 26px;
+            padding: 24px 18px;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            margin: 0 auto;
         }
-        .btn-action {
-            flex: 1;
-            max-width: 180px;
-            text-align: center;
-            text-decoration: none;
-            padding: 12px 14px;
-            border-radius: 30px;
+        .quiz-status-header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+        .pill-badge {
             font-family: 'Fredoka One', cursive;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            color: var(--cartoon-dark);
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 2px solid var(--cartoon-dark);
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            background: #fffbeb;
+        }
+        .quiz-progress-track {
+            height: 14px;
+            background: #f1f5f9;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 14px;
+            margin-bottom: 18px;
+            overflow: hidden;
+            padding: 2px;
+        }
+        .quiz-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #00f2fe);
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        .question-text-box {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.15rem;
+            color: var(--cartoon-dark);
+            margin-bottom: 18px;
+            line-height: 1.35;
+            text-align: center;
+            background: #f8fafc;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 2px dashed #cbd5e1;
+        }
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option-button {
+            padding: 12px 14px;
+            background: #ffffff;
             border: 2.5px solid var(--cartoon-dark);
-            box-shadow: var(--comic-shadow-sm);
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            transition: all 0.1s ease;
+            text-align: left;
             color: var(--cartoon-dark);
         }
-        .btn-home { background: var(--cartoon-cyan); }
-        .btn-games { background: var(--cartoon-green); }
-        .btn-action:active {
+        .option-button:active {
             transform: translateY(2px);
             box-shadow: 0 1px 0 var(--cartoon-dark);
         }
+        .option-button.selected {
+            background: var(--cartoon-cyan) !important;
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--cartoon-dark) !important;
+        }
+        .option-button.disabled {
+            pointer-events: none;
+        }
+        .opt-letter {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: var(--cartoon-dark);
+            color: #ffffff;
+            border: 1.5px solid var(--cartoon-dark);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .option-button.selected .opt-letter {
+            background: var(--cartoon-yellow);
+            color: var(--cartoon-dark);
+        }
+        .quiz-result-view {
+            text-align: center;
+            display: none;
+            padding: 10px;
+        }
+        .score-circle-badge {
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            border: var(--comic-border);
+            background: #fef08a;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 6px 0 var(--cartoon-dark);
+        }
+        .score-num {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.6rem;
+            color: var(--cartoon-dark);
+            line-height: 1;
+        }
+
+        /* ===== 4. SCREEN 3: PERBANDINGAN PLANET (DENGAN JPG LOKAL BULAT PRESISI) ===== */
+        .compare-box-card {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 26px;
+            padding: 20px 16px;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            margin: 0 auto;
+        }
+        .compare-pickers {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .compare-pickers select {
+            width: 100%;
+            padding: 10px 8px;
+            background: #f8fafc;
+            color: var(--cartoon-dark);
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-family: 'Fredoka One', cursive;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            outline: none;
+            cursor: pointer;
+        }
+        .vs-circle {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd166 0%, #ff3366 100%);
+            border: 2.5px solid var(--cartoon-dark);
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.1rem;
+            color: #ffffff;
+        }
+        .compare-side-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .side-planet-card {
+            text-align: center;
+            padding: 12px 8px;
+            border-radius: 18px;
+            background: #f8fafc;
+            border: 2px solid var(--cartoon-dark);
+            box-shadow: 0 4px 0 var(--cartoon-dark);
+        }
+        .side-planet-card:nth-child(1) { background: #fffbeb; }
+        .side-planet-card:nth-child(2) { background: #e0f2fe; }
+
+        /* WADAH GAMBAR JPG AGAR SELALU BULAT BERSIH & TIDAK BOCOR KOTAK HITAM */
+        .planet-img-circle {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            border: 3px solid var(--cartoon-dark);
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            margin: 0 auto 10px;
+            overflow: hidden !important;
+            clip-path: circle(50% at 50% 50%) !important;
+            -webkit-clip-path: circle(50% at 50% 50%) !important;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            isolation: isolate;
+        }
+        .planet-img-circle img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            border-radius: 50% !important;
+            display: block !important;
+            clip-path: circle(50% at 50% 50%) !important;
+            -webkit-clip-path: circle(50% at 50% 50%) !important;
+        }
+
+        .side-planet-card h3 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+            color: var(--cartoon-dark);
+        }
+        .stat-rows {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .stat-row-item {
+            display: flex;
+            flex-direction: column;
+            padding: 4px 6px;
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            text-align: center;
+        }
+        .stat-row-item span:first-child {
+            color: #64748b;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.68rem;
+            margin-bottom: 1px;
+        }
+        .stat-row-item span:last-child {
+            color: var(--cartoon-dark);
+            font-weight: 800;
+        }
 
         footer {
-            text-align: center; padding: 16px;
-            background: #ffffff; color: var(--cartoon-dark);
-            font-family: 'Fredoka One', cursive; font-size: 0.82rem;
+            text-align: center;
+            padding: 16px;
+            background: #ffffff;
+            color: var(--cartoon-dark);
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.82rem;
             border-top: var(--comic-border);
-            margin-top: 30px;
+            margin-top: 35px;
         }
     </style>
 </head>
 <body>
 
-<!-- VIDEO BACKGROUND -->
-<div class="video-bg">
-    <video autoplay muted loop playsinline>
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-star-field-in-space-2639-large.mp4" type="video/mp4">
-    </video>
-    <div class="video-overlay"></div>
-</div>
-
-<div class="stars" id="stars"></div>
-
-<!-- NAVBAR RAPI UNTUK HP -->
-<header>
-    <nav>
-        <a href="index.html" class="logo">
-            <span class="logo-icon">🚀</span>
-            <span>Planet-Learning</span>
-        </a>
-        <button class="menu-toggle" onclick="toggleMenuDrawer(true)">
-            <span>Menu</span> ☰
-        </button>
-    </nav>
-</header>
-
-<!-- POPUP DRAWER MENU HP -->
-<div class="mobile-drawer" id="mobileDrawer" onclick="closeDrawerOutside(event)">
-    <div class="drawer-box">
-        <h3>🪐 PILIH MENU</h3>
-        <a href="index.html">🏠 Beranda</a>
-        <a href="materi.html" class="active" onclick="toggleMenuDrawer(false)">📚 Belajar & Materi</a>
-        <a href="games.html">🎮 Arena Games</a>
-        <a href="info.html">ℹ️ Tentang Kami</a>
-        <button class="btn-close-drawer" onclick="toggleMenuDrawer(false)">Tutup ✕</button>
-    </div>
-</div>
-
-<!-- KONTEN MATERI -->
-<main class="materi-section">
-    <div class="header-title">
-        <span class="header-tag">📖 Ensiklopedia Pintar</span>
-        <h1>MATERI PEMBELAJARAN</h1>
-        <p>Ayo pelajari semua keajaiban Tata Surya kita! ✨</p>
+    <!-- VIDEO BACKGROUND -->
+    <div class="video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-star-field-in-space-2639-large.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
     </div>
 
-    <div class="materi-list">
-        <!-- 1. Mengenal Tata Surya -->
-        <article class="materi-card">
-            <div class="card-stripe stripe-purple"></div>
-            <div class="card-top">
-                <span class="card-icon">🌌</span>
-                <h2 class="card-title">1. Mengenal Tata Surya</h2>
-            </div>
-            <div class="card-body">
-                Tata Surya adalah kumpulan benda-benda langit yang mengelilingi Matahari. Di dalamnya terdapat 8 planet, yaitu Merkurius, Venus, Bumi, Mars, Jupiter, Saturnus, Uranus, dan Neptunus. Tata Surya kita berada di Galaksi Bima Sakti. Matahari menjadi pusat Tata Surya karena memiliki gravitasi yang sangat besar.
-            </div>
-        </article>
+    <div class="stars" id="stars"></div>
+    
+    <!-- NAVBAR -->
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span>Planet-Learning</span>
+            </a>
+            <button class="menu-toggle" onclick="toggleMenuDrawer(true)">
+                <span>Menu</span> ☰
+            </button>
+        </nav>
+    </header>
 
-        <!-- 2. Mengenal Matahari -->
-        <article class="materi-card">
-            <div class="card-stripe stripe-yellow"></div>
-            <div class="card-top">
-                <span class="card-icon">☀️</span>
-                <h2 class="card-title">2. Mengenal Matahari</h2>
-            </div>
-            <div class="card-body">
-                Matahari adalah sebuah bintang yang menjadi pusat Tata Surya. Matahari menghasilkan cahaya dan panas yang sangat penting bagi kehidupan di Bumi. Energi Matahari berasal dari fusi nuklir, yaitu proses penggabungan hidrogen menjadi helium di bagian intinya. Panas dan cahaya Matahari juga memengaruhi kehidupan serta cuaca di Bumi.
-            </div>
-        </article>
+    <!-- MOBILE DRAWER MENU -->
+    <div class="mobile-drawer" id="mobileDrawer" onclick="closeDrawerOutside(event)">
+        <div class="drawer-box">
+            <h3>🪐 PILIH MENU</h3>
+            <a href="index.html">🏠 Beranda</a>
+            <a href="materi.html" class="active" onclick="toggleMenuDrawer(false)">📚 Belajar & Materi</a>
+            <a href="games.html">🎮 Arena Games</a>
+            <a href="info.html">ℹ️ Tentang Kami</a>
+            <button class="btn-close-drawer" onclick="toggleMenuDrawer(false)">Tutup ✕</button>
+        </div>
+    </div>
 
-        <!-- 3. Planet Dalam -->
-        <article class="materi-card">
-            <div class="card-stripe stripe-orange"></div>
-            <div class="card-top">
-                <span class="card-icon">🪨</span>
-                <h2 class="card-title">3. Planet Dalam</h2>
-            </div>
-            <div class="card-body">
-                Planet dalam terdiri dari Merkurius, Venus, Bumi, dan Mars. Merkurius adalah planet yang paling dekat dengan Matahari. Venus merupakan planet terpanas di Tata Surya karena atmosfernya sangat tebal. Mars dikenal sebagai Planet Merah karena permukaannya banyak mengandung debu dan batuan berwarna kemerahan. Di Mars terdapat Olympus Mons, salah satu gunung berapi terbesar di Tata Surya.
-            </div>
-        </article>
+    <!-- CONTENT -->
+    <main class="content-page">
 
-        <!-- 4. Planet Luar -->
-        <article class="materi-card">
-            <div class="card-stripe stripe-blue"></div>
-            <div class="card-top">
-                <span class="card-icon">🪐</span>
-                <h2 class="card-title">4. Planet Luar</h2>
+        <!-- ================= SCREEN 0: 3 MENU UTAMA BESAR ================= -->
+        <section id="viewMainMenu" class="view-section active">
+            <div class="page-header">
+                <div class="header-badge">🌟 Pusat Belajar Edukasi</div>
+                <h1>ZONA PETUALANGAN BELAJAR</h1>
+                <p>Pilih salah satu menu seru di bawah ini untuk memulai petualanganmu:</p>
             </div>
-            <div class="card-body">
-                Planet luar terdiri dari Jupiter, Saturnus, Uranus, dan Neptunus. Jupiter adalah planet terbesar di Tata Surya dan memiliki badai raksasa bernama Great Red Spot. Saturnus terkenal dengan sistem cincinnya yang indah. Uranus memiliki kemiringan rotasi sekitar 98°, sehingga terlihat seperti menggelinding saat mengelilingi Matahari. Neptunus merupakan planet yang paling jauh dari Matahari.
-            </div>
-        </article>
 
-        <!-- 5. Sabuk Asteroid -->
-        <article class="materi-card">
-            <div class="card-stripe stripe-pink"></div>
-            <div class="card-top">
-                <span class="card-icon">☄️</span>
-                <h2 class="card-title">5. Sabuk Asteroid</h2>
-            </div>
-            <div class="card-body">
-                Asteroid adalah benda langit yang tersusun dari batuan dan logam. Banyak asteroid berada di Sabuk Asteroid, yaitu wilayah yang terletak di antara orbit Mars dan Jupiter. Salah satu benda terbesar di wilayah ini adalah Ceres, yang termasuk planet kerdil.
-            </div>
-        </article>
+            <div class="big-menu-grid">
+                <!-- Menu 1: Materi -->
+                <div class="big-menu-card menu-materi" onclick="showSubView('materi')">
+                    <div class="big-menu-icon">📚</div>
+                    <h2>Materi Pembelajaran</h2>
+                    <p>Pelajari 8 materi lengkap dan fakta ajaib seputar Matahari serta planet-planet!</p>
+                    <span class="menu-action-badge">📖 Buka Materi</span>
+                </div>
 
-        <!-- 6. Satelit Alami -->
-        <article class="materi-card">
-            <div class="card-stripe stripe-cyan"></div>
-            <div class="card-top">
-                <span class="card-icon">🌙</span>
-                <h2 class="card-title">6. Satelit Alami</h2>
-            </div>
-            <div class="card-body">
-                Satelit alami adalah benda langit yang mengorbit sebuah planet. Bulan adalah satelit alami Bumi. Jupiter memiliki banyak satelit, salah satunya Ganymede. Ganymede merupakan satelit alami terbesar di Tata Surya, bahkan ukurannya lebih besar daripada planet Merkurius.
-            </div>
-        </article>
+                <!-- Menu 2: Kuis (15 Soal) -->
+                <div class="big-menu-card menu-kuis" onclick="showSubView('kuis')">
+                    <div class="big-menu-icon">🧠</div>
+                    <h2>Kuis Tata Surya</h2>
+                    <p>Uji seberapa hebat pengetahuan astronomimu dengan 15 soal seru dan menantang!</p>
+                    <span class="menu-action-badge">🎯 Mainkan 15 Soal</span>
+                </div>
 
-        <!-- 7. Komet dan Ekornya -->
-        <article class="materi-card">
-            <div class="card-stripe stripe-green"></div>
-            <div class="card-top">
-                <span class="card-icon">☄️</span>
-                <h2 class="card-title">7. Komet dan Ekornya</h2>
-            </div>
-            <div class="card-body">
-                Komet adalah benda langit yang tersusun dari es, debu, dan batuan. Ketika mendekati Matahari, es pada komet dapat berubah menjadi gas dan membentuk ekor yang terlihat dari Bumi. Ekor komet selalu mengarah menjauhi Matahari karena dipengaruhi oleh angin Matahari.
-            </div>
-        </article>
-
-        <!-- 8. Urutan Planet -->
-        <article class="materi-card">
-            <div class="card-stripe stripe-yellow"></div>
-            <div class="card-top">
-                <span class="card-icon">🚀</span>
-                <h2 class="card-title">8. Urutan Planet</h2>
-            </div>
-            <div class="card-body">
-                Planet-planet di Tata Surya memiliki urutan berdasarkan jaraknya dari Matahari, yaitu Merkurius, Venus, Bumi, Mars, Jupiter, Saturnus, Uranus, dan Neptunus. Jadi, semakin ke kanan dalam urutan tersebut, semakin jauh planet dari Matahari. Dengan mengingat urutan ini, kita dapat lebih mudah mengenali posisi setiap planet.
-                
-                <div class="planet-order-chain">
-                    <span class="order-badge">1. ⚪ Merkurius</span>
-                    <span class="order-badge">2. 🟡 Venus</span>
-                    <span class="order-badge">3. 🔵 Bumi</span>
-                    <span class="order-badge">4. 🔴 Mars</span>
-                    <span class="order-badge">5. 🟠 Jupiter</span>
-                    <span class="order-badge">6. 🪐 Saturnus</span>
-                    <span class="order-badge">7. 💎 Uranus</span>
-                    <span class="order-badge">8. 🌊 Neptunus</span>
+                <!-- Menu 3: Bandingkan -->
+                <div class="big-menu-card menu-bandingkan" onclick="showSubView('bandingkan')">
+                    <div class="big-menu-icon">⚖️</div>
+                    <h2>Bandingkan Planet</h2>
+                    <p>Bandingkan langsung ukuran, jarak, dan suhu 2 planet sekaligus secara berdampingan!</p>
+                    <span class="menu-action-badge">🪐 Mulai Bandingkan</span>
                 </div>
             </div>
-        </article>
-    </div>
+        </section>
 
-    <!-- TOMBOL NAVIGASI BAWAH -->
-    <div class="bottom-action">
-        <a href="index.html" class="btn-action btn-home">🏠 Ke Beranda</a>
-        <a href="games.html" class="btn-action btn-games">🎮 Main Game</a>
-    </div>
-</main>
+        <!-- ================= SCREEN 1: KONTEN MATERI PEMBELAJARAN (8 BAB LENGKAP) ================= -->
+        <section id="viewMateri" class="view-section">
+            <div class="sub-nav-bar">
+                <button class="back-menu-btn" onclick="showSubView('menu')">⬅ Menu Belajar</button>
+            </div>
 
-<footer>
-    <p>© 2026 Planet-Learning. Belajar jadi seru! 🚀✨</p>
-</footer>
+            <div class="page-header">
+                <div class="header-badge">📖 Ensiklopedia Tata Surya</div>
+                <h1>MODUL MATERI BELAJAR</h1>
+                <p>Pelajari keajaiban alam semesta dengan materi yang terstruktur rapi!</p>
+            </div>
 
-<script>
-    // Bintang Latar
-    const starsContainer = document.getElementById('stars');
-    for (let i = 0; i < 35; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        star.style.width = Math.random() * 3 + 1 + 'px';
-        star.style.height = star.style.width;
-        star.style.left = Math.random() * 100 + '%';
-        star.style.top = Math.random() * 100 + '%';
-        star.style.animationDelay = Math.random() * 3 + 's';
-        starsContainer.appendChild(star);
-    }
+            <div class="materi-grid">
+                <!-- 1. Mengenal Tata Surya -->
+                <article class="materi-card">
+                    <div class="card-stripe stripe-purple"></div>
+                    <div class="card-header">
+                        <span class="card-icon">🌌</span>
+                        <h2 class="card-title">1. Mengenal Tata Surya</h2>
+                    </div>
+                    <div class="card-body">
+                        Tata Surya adalah kumpulan benda-benda langit yang mengelilingi Matahari. Di dalamnya terdapat 8 planet, yaitu Merkurius, Venus, Bumi, Mars, Jupiter, Saturnus, Uranus, dan Neptunus. Tata Surya kita berada di Galaksi Bima Sakti. Matahari menjadi pusat Tata Surya karena memiliki gravitasi yang sangat besar.
+                    </div>
+                </article>
 
-    // Toggle Drawer Menu HP
-    function toggleMenuDrawer(isOpen) {
-        const drawer = document.getElementById('mobileDrawer');
-        if (isOpen) {
-            drawer.classList.add('open');
-        } else {
-            drawer.classList.remove('open');
+                <!-- 2. Mengenal Matahari -->
+                <article class="materi-card">
+                    <div class="card-stripe stripe-yellow"></div>
+                    <div class="card-header">
+                        <span class="card-icon">☀️</span>
+                        <h2 class="card-title">2. Mengenal Matahari</h2>
+                    </div>
+                    <div class="card-body">
+                        Matahari adalah sebuah bintang yang menjadi pusat Tata Surya. Matahari menghasilkan cahaya dan panas yang sangat penting bagi kehidupan di Bumi. Energi Matahari berasal dari fusi nuklir, yaitu proses penggabungan hidrogen menjadi helium di bagian intinya. Panas dan cahaya Matahari juga memengaruhi kehidupan serta cuaca di Bumi.
+                    </div>
+                </article>
+
+                <!-- 3. Planet Dalam -->
+                <article class="materi-card">
+                    <div class="card-stripe stripe-orange"></div>
+                    <div class="card-header">
+                        <span class="card-icon">🪨</span>
+                        <h2 class="card-title">3. Planet Dalam</h2>
+                    </div>
+                    <div class="card-body">
+                        Planet dalam terdiri dari Merkurius, Venus, Bumi, dan Mars. Merkurius adalah planet yang paling dekat dengan Matahari. Venus merupakan planet terpanas di Tata Surya karena atmosfernya sangat tebal. Mars dikenal sebagai Planet Merah karena permukaannya banyak mengandung debu dan batuan berwarna kemerahan. Di Mars terdapat Olympus Mons, salah satu gunung berapi terbesar di Tata Surya.
+                    </div>
+                </article>
+
+                <!-- 4. Planet Luar -->
+                <article class="materi-card">
+                    <div class="card-stripe stripe-blue"></div>
+                    <div class="card-header">
+                        <span class="card-icon">🪐</span>
+                        <h2 class="card-title">4. Planet Luar</h2>
+                    </div>
+                    <div class="card-body">
+                        Planet luar terdiri dari Jupiter, Saturnus, Uranus, dan Neptunus. Jupiter adalah planet terbesar di Tata Surya dan memiliki badai raksasa bernama Great Red Spot. Saturnus terkenal dengan sistem cincinnya yang indah. Uranus memiliki kemiringan rotasi sekitar 98°, sehingga terlihat seperti menggelinding saat mengelilingi Matahari. Neptunus merupakan planet yang paling jauh dari Matahari.
+                    </div>
+                </article>
+
+                <!-- 5. Sabuk Asteroid -->
+                <article class="materi-card">
+                    <div class="card-stripe stripe-pink"></div>
+                    <div class="card-header">
+                        <span class="card-icon">☄️</span>
+                        <h2 class="card-title">5. Sabuk Asteroid</h2>
+                    </div>
+                    <div class="card-body">
+                        Asteroid adalah benda langit yang tersusun dari batuan dan logam. Banyak asteroid berada di Sabuk Asteroid, yaitu wilayah yang terletak di antara orbit Mars dan Jupiter. Salah satu benda terbesar di wilayah ini adalah Ceres, yang termasuk planet kerdil.
+                    </div>
+                </article>
+
+                <!-- 6. Satelit Alami -->
+                <article class="materi-card">
+                    <div class="card-stripe stripe-cyan"></div>
+                    <div class="card-header">
+                        <span class="card-icon">🌙</span>
+                        <h2 class="card-title">6. Satelit Alami</h2>
+                    </div>
+                    <div class="card-body">
+                        Satelit alami adalah benda langit yang mengorbit sebuah planet. Bulan adalah satelit alami Bumi. Jupiter memiliki banyak satelit, salah satunya Ganymede. Ganymede merupakan satelit alami terbesar di Tata Surya, bahkan ukurannya lebih besar daripada planet Merkurius.
+                    </div>
+                </article>
+
+                <!-- 7. Komet dan Ekornya -->
+                <article class="materi-card">
+                    <div class="card-stripe stripe-green"></div>
+                    <div class="card-header">
+                        <span class="card-icon">☄️</span>
+                        <h2 class="card-title">7. Komet dan Ekornya</h2>
+                    </div>
+                    <div class="card-body">
+                        Komet adalah benda langit yang tersusun dari es, debu, dan batuan. Ketika mendekati Matahari, es pada komet dapat berubah menjadi gas dan membentuk ekor yang terlihat dari Bumi. Ekor komet selalu mengarah menjauhi Matahari karena dipengaruhi oleh angin Matahari.
+                    </div>
+                </article>
+
+                <!-- 8. Urutan Planet -->
+                <article class="materi-card">
+                    <div class="card-stripe stripe-yellow"></div>
+                    <div class="card-header">
+                        <span class="card-icon">🚀</span>
+                        <h2 class="card-title">8. Urutan Planet</h2>
+                    </div>
+                    <div class="card-body">
+                        Planet-planet di Tata Surya memiliki urutan berdasarkan jaraknya dari Matahari, yaitu Merkurius, Venus, Bumi, Mars, Jupiter, Saturnus, Uranus, dan Neptunus. Jadi, semakin ke kanan dalam urutan tersebut, semakin jauh planet dari Matahari. Dengan mengingat urutan ini, kita dapat lebih mudah mengenali posisi setiap planet.
+                        
+                        <div class="planet-order-chain">
+                            <span class="order-badge">1. ⚪ Merkurius</span>
+                            <span class="order-badge">2. 🟡 Venus</span>
+                            <span class="order-badge">3. 🔵 Bumi</span>
+                            <span class="order-badge">4. 🔴 Mars</span>
+                            <span class="order-badge">5. 🟠 Jupiter</span>
+                            <span class="order-badge">6. 🪐 Saturnus</span>
+                            <span class="order-badge">7. 💎 Uranus</span>
+                            <span class="order-badge">8. 🌊 Neptunus</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- ================= SCREEN 2: KONTEN KUIS INTERAKTIF (15 SOAL) ================= -->
+        <section id="viewKuis" class="view-section">
+            <div class="sub-nav-bar">
+                <button class="back-menu-btn" onclick="showSubView('menu')">⬅ Menu Belajar</button>
+            </div>
+
+            <div class="page-header">
+                <div class="header-badge">🎯 Tantangan Astronot Cilik</div>
+                <h1>KUIS TATA SURYA</h1>
+                <p>Selesaikan 15 pertanyaan seru tentang alam semesta kita!</p>
+            </div>
+
+            <div class="quiz-box-card">
+                <div id="quizInGameArea">
+                    <div class="quiz-status-header">
+                        <span class="pill-badge" id="qCounterText">Soal 1 / 15</span>
+                    </div>
+                    <div class="quiz-progress-track">
+                        <div class="quiz-progress-bar" id="qProgressBar"></div>
+                    </div>
+                    <div class="question-text-box" id="qQuestionTitle">Memuat pertanyaan...</div>
+                    <div class="options-list" id="qOptionsWrapper"></div>
+                </div>
+
+                <!-- Layar Hasil Kuis -->
+                <div class="quiz-result-view" id="quizResultArea">
+                    <div class="score-circle-badge">
+                        <span class="score-num" id="qFinalScore">0</span>
+                        <span style="font-family:'Fredoka One',cursive; font-size:0.8rem; color:#64748b;">NILAI</span>
+                    </div>
+                    <h2 id="qResultMessage" style="font-family:'Fredoka One',cursive; font-size:1.8rem; color:var(--cartoon-dark); margin-bottom:6px;">Luar Biasa!</h2>
+                    <p id="qResultDetail" style="font-size:0.95rem; font-weight:700; color:#475569; margin-bottom:18px;">Kamu menjawab kuis dengan sangat baik!</p>
+                    <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+                        <button class="back-menu-btn" style="background:var(--cartoon-green); color:#fff;" onclick="startQuizSession()">🔄 Main Lagi</button>
+                        <button class="back-menu-btn" onclick="showSubView('menu')">🏠 Menu</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SCREEN 3: KONTEN BANDINGKAN PLANET (DENGAN JPG LOKAL) ================= -->
+        <section id="viewBandingkan" class="view-section">
+            <div class="sub-nav-bar">
+                <button class="back-menu-btn" onclick="showSubView('menu')">⬅ Menu Belajar</button>
+            </div>
+
+            <div class="page-header">
+                <div class="header-badge">⚖️ Timbang & Bandingkan</div>
+                <h1>PERBANDINGAN PLANET</h1>
+                <p>Pilih dua planet untuk melihat perbedaan ukuran, suhu, dan rotasi mereka!</p>
+            </div>
+
+            <div class="compare-box-card">
+                <div class="compare-pickers">
+                    <select id="planetSelect1" onchange="renderPlanetComparison()">
+                        <option value="0">Merkurius</option>
+                        <option value="1">Venus</option>
+                        <option value="2" selected>Bumi</option>
+                        <option value="3">Mars</option>
+                        <option value="4">Jupiter</option>
+                        <option value="5">Saturnus</option>
+                        <option value="6">Uranus</option>
+                        <option value="7">Neptunus</option>
+                    </select>
+
+                    <div class="vs-circle">VS</div>
+
+                    <select id="planetSelect2" onchange="renderPlanetComparison()">
+                        <option value="0">Merkurius</option>
+                        <option value="1">Venus</option>
+                        <option value="2">Bumi</option>
+                        <option value="3" selected>Mars</option>
+                        <option value="4">Jupiter</option>
+                        <option value="5">Saturnus</option>
+                        <option value="6">Uranus</option>
+                        <option value="7">Neptunus</option>
+                    </select>
+                </div>
+
+                <div class="compare-side-cards" id="comparisonResultBox"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Planet-Learning. Belajar jadi lebih menyenangkan! 🚀✨</p>
+    </footer>
+
+    <script>
+        // Generator Bintang Latar
+        const starsContainer = document.getElementById('stars');
+        if (starsContainer) {
+            for (let i = 0; i < 35; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
         }
-    }
 
-    function closeDrawerOutside(e) {
-        if (e.target === document.getElementById('mobileDrawer')) {
-            toggleMenuDrawer(false);
+        // Toggle Drawer Menu HP
+        function toggleMenuDrawer(isOpen) {
+            const drawer = document.getElementById('mobileDrawer');
+            if (isOpen) drawer.classList.add('open');
+            else drawer.classList.remove('open');
         }
-    }
-</script>
+
+        function closeDrawerOutside(e) {
+            if (e.target === document.getElementById('mobileDrawer')) {
+                toggleMenuDrawer(false);
+            }
+        }
+
+        // Navigasi Screen Pilihan Menu
+        function showSubView(targetView) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+
+            if (targetView === 'materi') {
+                document.getElementById('viewMateri').classList.add('active');
+            } else if (targetView === 'kuis') {
+                document.getElementById('viewKuis').classList.add('active');
+                startQuizSession();
+            } else if (targetView === 'bandingkan') {
+                document.getElementById('viewBandingkan').classList.add('active');
+                renderPlanetComparison();
+            } else {
+                document.getElementById('viewMainMenu').classList.add('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================= 15 SOAL KUIS LENGKAP =================
+        const quizQuestions = [
+            { q: "Planet terbesar di Tata Surya adalah?", o: ["Bumi", "Saturnus", "Jupiter", "Neptunus"], a: 2 },
+            { q: "Planet yang dijuluki sebagai 'Planet Merah' adalah?", o: ["Venus", "Mars", "Jupiter", "Merkurius"], a: 1 },
+            { q: "Planet apakah yang terdekat dengan Matahari?", o: ["Venus", "Bumi", "Mars", "Merkurius"], a: 3 },
+            { q: "Planet manakah yang terkenal dengan sistem cincinnya yang indah?", o: ["Uranus", "Jupiter", "Saturnus", "Neptunus"], a: 2 },
+            { q: "Berapa jumlah planet yang mengorbit Matahari dalam Tata Surya kita?", o: ["7", "8", "9", "10"], a: 1 },
+            { q: "Planet terpanas di Tata Surya, meskipun bukan yang terdekat dengan Matahari, adalah?", o: ["Merkurius", "Venus", "Mars", "Bumi"], a: 1 },
+            { q: "Planet yang berotasi miring hampir 98 derajat sehingga seolah-olah 'menggelinding' adalah?", o: ["Neptunus", "Saturnus", "Uranus", "Jupiter"], a: 2 },
+            { q: "Gunung tertinggi di Tata Surya, Olympus Mons, terletak di planet?", o: ["Bumi", "Venus", "Mars", "Jupiter"], a: 2 },
+            { q: "Badai raksasa yang sudah berputar ratusan tahun di Jupiter disebut?", o: ["Great Blue Spot", "Great Red Spot", "Dark Storm", "Cyclone Alpha"], a: 1 },
+            { q: "Sabuk Asteroid utama di Tata Surya terletak di antara orbit planet?", o: ["Bumi dan Mars", "Mars dan Jupiter", "Jupiter dan Saturnus", "Merkurius dan Venus"], a: 1 },
+            { q: "Planet terjauh dari Matahari dalam sistem 8 planet adalah?", o: ["Uranus", "Bumi", "Saturnus", "Neptunus"], a: 3 },
+            { q: "Satelit alami terbesar di Tata Surya yang mengorbit Jupiter adalah?", o: ["Titan", "Europa", "Ganymede", "Bulan"], a: 2 },
+            { q: "Ekor komet selalu mengarah menjauhi benda langit ini karena tekanan anginnya?", o: ["Bumi", "Jupiter", "Matahari", "Bulan"], a: 2 },
+            { q: "Galaksi yang menjadi rumah bagi Tata Surya kita bernama?", o: ["Andromeda", "Bima Sakti", "Triangulum", "Whirlpool"], a: 1 },
+            { q: "Reaksi apa yang terjadi di inti Matahari sehingga menghasilkan energi sangat besar?", o: ["Fisi Nuklir", "Fusi Nuklir", "Pembakaran Kimia", "Reaksi Magnetik"], a: 1 }
+        ];
+
+        const TOTAL_SOAL_PER_SESI = 15;
+        let sessionQuiz = [];
+        let currentQuizIndex = 0;
+        let scoreQuiz = 0;
+        let isAnswering = false;
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function startQuizSession() {
+            document.getElementById('quizInGameArea').style.display = 'block';
+            document.getElementById('quizResultArea').style.display = 'none';
+
+            const shuffled15 = shuffle(quizQuestions).slice(0, TOTAL_SOAL_PER_SESI);
+            sessionQuiz = shuffled15.map(item => {
+                const correctText = item.o[item.a];
+                const shuffledOpts = shuffle(item.o);
+                return {
+                    q: item.q,
+                    options: shuffledOpts,
+                    correctIdx: shuffledOpts.indexOf(correctText)
+                };
+            });
+
+            currentQuizIndex = 0;
+            scoreQuiz = 0;
+            isAnswering = false;
+            loadCurrentQuestion();
+        }
+
+        function loadCurrentQuestion() {
+            isAnswering = false;
+            const curData = sessionQuiz[currentQuizIndex];
+
+            document.getElementById('qCounterText').textContent = `Soal ${currentQuizIndex + 1} / ${sessionQuiz.length}`;
+            document.getElementById('qProgressBar').style.width = `${(currentQuizIndex / sessionQuiz.length) * 100}%`;
+            document.getElementById('qQuestionTitle').textContent = curData.q;
+
+            const optsWrap = document.getElementById('qOptionsWrapper');
+            optsWrap.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+
+            curData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'option-button';
+                btn.innerHTML = `<span class="opt-letter">${letters[idx]}</span> <span>${opt}</span>`;
+                btn.onclick = () => selectQuizAnswer(idx, btn);
+                optsWrap.appendChild(btn);
+            });
+        }
+
+        function selectQuizAnswer(selectedIdx, btnEl) {
+            if (isAnswering) return;
+            isAnswering = true;
+
+            const curData = sessionQuiz[currentQuizIndex];
+            document.querySelectorAll('.option-button').forEach(b => b.classList.add('disabled'));
+            btnEl.classList.add('selected');
+
+            if (selectedIdx === curData.correctIdx) {
+                scoreQuiz++;
+            }
+
+            setTimeout(() => {
+                currentQuizIndex++;
+                if (currentQuizIndex < sessionQuiz.length) {
+                    loadCurrentQuestion();
+                } else {
+                    showQuizResult();
+                }
+            }, 350);
+        }
+
+        function showQuizResult() {
+            document.getElementById('quizInGameArea').style.display = 'none';
+            const resultBox = document.getElementById('quizResultArea');
+            resultBox.style.display = 'block';
+
+            const finalVal = Math.round((scoreQuiz / sessionQuiz.length) * 100);
+            document.getElementById('qFinalScore').textContent = finalVal;
+
+            if (finalVal >= 85) {
+                document.getElementById('qResultMessage').textContent = "🌟 Luar Biasa, Astronot Hebat!";
+                document.getElementById('qResultDetail').textContent = `Kamu berhasil menjawab ${scoreQuiz} dari 15 soal dengan benar!`;
+            } else if (finalVal >= 60) {
+                document.getElementById('qResultMessage').textContent = "🚀 Bagus Sekali!";
+                document.getElementById('qResultDetail').textContent = `Kamu menjawab ${scoreQuiz} dari 15 soal dengan tepat. Tingkatkan terus belajarmu ya!`;
+            } else {
+                document.getElementById('qResultMessage').textContent = "💪 Tetap Semangat!";
+                document.getElementById('qResultDetail').textContent = `Kamu menjawab ${scoreQuiz} dari 15 soal. Buka materi lagi yuk biar makin paham!`;
+            }
+
+            if (typeof confetti === 'function' && finalVal >= 60) {
+                confetti({ particleCount: 90, spread: 75, origin: { y: 0.6 } });
+            }
+        }
+
+        // ================= PERBANDINGAN PLANET (MENGGUNAKAN FILE JPG LOKAL) =================
+        const planetDataset = [
+            { name: 'Merkurius', img: 'assets/images/merkurius.png', jarak: '57,9 jt km', diameter: '4.879 km', suhu: '427°C', satelit: '0 Bulan', hari: '59 hari' },
+            { name: 'Venus', img: 'assets/images/venus.png', jarak: '108,2 jt km', diameter: '12.104 km', suhu: '465°C', satelit: '0 Bulan', hari: '243 hari' },
+            { name: 'Bumi', img: 'assets/images/bumi.png', jarak: '149,6 jt km', diameter: '12.742 km', suhu: '15°C', satelit: '1 (Bulan)', hari: '24 jam' },
+            { name: 'Mars', img: 'assets/images/mars.png', jarak: '227,9 jt km', diameter: '6.779 km', suhu: '-63°C', satelit: '2 Bulan', hari: '24,6 jam' },
+            { name: 'Jupiter', img: 'assets/images/jupiter.png', jarak: '778,5 jt km', diameter: '139.820 km', suhu: '-108°C', satelit: '95+ Bulan', hari: '9,9 jam' },
+            { name: 'Saturnus', img: 'assets/images/saturnus.png', jarak: '1,43 M km', diameter: '116.460 km', suhu: '-139°C', satelit: '146+ Bulan', hari: '10,7 jam' },
+            { name: 'Uranus', img: 'assets/images/uranus.png', jarak: '2,87 M km', diameter: '50.724 km', suhu: '-197°C', satelit: '27 Bulan', hari: '17,2 jam' },
+            { name: 'Neptunus', img: 'assets/images/neptunus.png', jarak: '4,5 M km', diameter: '49.244 km', suhu: '-201°C', satelit: '14 Bulan', hari: '16,1 jam' }
+        ];
+
+        function renderPlanetComparison() {
+            const idx1 = document.getElementById('planetSelect1').value;
+            const idx2 = document.getElementById('planetSelect2').value;
+            const p1 = planetDataset[idx1];
+            const p2 = planetDataset[idx2];
+
+            document.getElementById('comparisonResultBox').innerHTML = `
+                <div class="side-planet-card">
+                    <div class="planet-img-circle">
+                        <img src="${p1.img}" alt="${p1.name}">
+                    </div>
+                    <h3>${p1.name}</h3>
+                    <div class="stat-rows">
+                        <div class="stat-row-item"><span>🚀 Jarak</span><span>${p1.jarak}</span></div>
+                        <div class="stat-row-item"><span>📏 Ukuran</span><span>${p1.diameter}</span></div>
+                        <div class="stat-row-item"><span>🌡️ Suhu</span><span>${p1.suhu}</span></div>
+                        <div class="stat-row-item"><span>🌙 Satelit</span><span>${p1.satelit}</span></div>
+                        <div class="stat-row-item"><span>⏱️ Rotasi</span><span>${p1.hari}</span></div>
+                    </div>
+                </div>
+                <div class="side-planet-card">
+                    <div class="planet-img-circle">
+                        <img src="${p2.img}" alt="${p2.name}">
+                    </div>
+                    <h3>${p2.name}</h3>
+                    <div class="stat-rows">
+                        <div class="stat-row-item"><span>🚀 Jarak</span><span>${p2.jarak}</span></div>
+                        <div class="stat-row-item"><span>📏 Ukuran</span><span>${p2.diameter}</span></div>
+                        <div class="stat-row-item"><span>🌡️ Suhu</span><span>${p2.suhu}</span></div>
+                        <div class="stat-row-item"><span>🌙 Satelit</span><span>${p2.satelit}</span></div>
+                        <div class="stat-row-item"><span>⏱️ Rotasi</span><span>${p2.hari}</span></div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
