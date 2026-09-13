@@ -553,18 +553,25 @@
         }
 
         .planet-info-image {
-            width: 75px; height: 75px;
+            width: 75px;
+            height: 75px;
             border-radius: 50%;
-            border: 2.5px solid var(--cartoon-dark);
-            box-shadow: 0 3px 0 var(--cartoon-dark);
+            border: 3px solid var(--cartoon-dark);
+            box-shadow: 0 4px 0 var(--cartoon-dark);
             background: radial-gradient(circle, #e0f2fe 0%, #bae6fd 100%);
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
+            overflow: hidden; /* KUNCI UTAMA: Memotong sudut kotak hitam agar bulat mulus */
         }
-        .planet-info-image img { width: 85%; height: 85%; object-fit: contain; }
-
-        .planet-title-box {
-            text-align: left;
+        /* Tambahkan ini tepat di bawahnya agar semua foto planet selalu bulat pas */
+        .planet-info-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
         }
         .planet-info-name {
             font-family: 'Fredoka One', cursive;
@@ -912,6 +919,7 @@
     window.addEventListener('resize', resizeSolarSystem);
     window.addEventListener('DOMContentLoaded', resizeSolarSystem);
 
+    // Data Planet Lengkap
     // Data Planet Lengkap
     const planetData = {
         matahari: {
