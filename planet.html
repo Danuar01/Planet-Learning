@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet | Planet-Learning</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== SOLAR SYSTEM WITH REAL IMAGES (CLEAN & FIXED) ========== */
+        .solar-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+
+        .solar-system-wrapper {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .solar-system-container {
+            position: relative;
+            width: 700px;
+            height: 700px;
+            max-width: 95vw;
+            max-height: 70vh;
+        }
+
+        /* SUN - Center, Glowing, with Image */
+        .sun {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            z-index: 100;
+            cursor: pointer;
+            animation: sunPulse 4s ease-in-out infinite;
+        }
+
+        .sun img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.8))
+                    drop-shadow(0 0 40px rgba(255, 100, 0, 0.5));
+        }
+
+        @keyframes sunPulse {
+            0%, 100% { 
+                filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.8))
+                        drop-shadow(0 0 40px rgba(255, 100, 0, 0.5)); 
+            }
+            50% { 
+                filter: drop-shadow(0 0 30px rgba(255, 200, 0, 1))
+                        drop-shadow(0 0 60px rgba(255, 100, 0, 0.8)); 
+            }
+        }
+
+        .sun:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        /* ORBIT RINGS */
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .orbit-1 { width: 120px; height: 120px; }
+        .orbit-2 { width: 170px; height: 170px; }
+        .orbit-3 { width: 230px; height: 230px; }
+        .orbit-4 { width: 290px; height: 290px; }
+        .orbit-5 { width: 380px; height: 380px; }
+        .orbit-6 { width: 470px; height: 470px; }
+        .orbit-7 { width: 560px; height: 560px; }
+        .orbit-8 { width: 650px; height: 650px; }
+
+        /* PLANET ORBIT WRAPPER */
+        .planet-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            animation: rotateOrbit linear infinite;
+        }
+
+        @keyframes rotateOrbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* PLANET CONTAINER */
+        .planet {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            animation: counterRotate linear infinite;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .planet:hover {
+            transform: translate(-50%, -50%) scale(1.5);
+            z-index: 50;
+        }
+
+        @keyframes counterRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        /* PLANET IMAGES */
+        .planet img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+        }
+
+        /* Planet Sizes & Positions */
+        .mercury { width: 12px; height: 12px; left: 60px; top: 0; }
+        .mercury-orbit, .mercury { animation-duration: 8s; }
+
+        .venus { width: 18px; height: 18px; left: 85px; top: 0; }
+        .venus-orbit, .venus { animation-duration: 14s; }
+
+        .earth { width: 19px; height: 19px; left: 115px; top: 0; }
+        .earth-orbit, .earth { animation-duration: 20s; }
+
+        .mars { width: 14px; height: 14px; left: 145px; top: 0; }
+        .mars-orbit, .mars { animation-duration: 30s; }
+
+        .jupiter { width: 45px; height: 45px; left: 190px; top: 0; }
+        .jupiter-orbit, .jupiter { animation-duration: 50s; }
+
+        .saturn { width: 40px; height: 40px; left: 235px; top: 0; }
+        .saturn-orbit, .saturn { animation-duration: 70s; }
+
+        .saturn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(75deg);
+            width: 180%;
+            height: 180%;
+            border: 2px solid rgba(200, 180, 120, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .uranus { width: 28px; height: 28px; left: 280px; top: 0; }
+        .uranus-orbit, .uranus { animation-duration: 90s; }
+
+        .neptune { width: 27px; height: 27px; left: 325px; top: 0; }
+        .neptune-orbit, .neptune { animation-duration: 110s; }
+
+        /* Moon for Earth */
+        .moon {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #d0d0d0;
+            border-radius: 50%;
+            top: 50%;
+            right: -10px;
+            animation: moonOrbit 3s linear infinite;
+        }
+
+        @keyframes moonOrbit {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Controls */
+        .solar-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            z-index: 100;
+        }
+
+        .solar-btn {
+            padding: 10px 20px;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .solar-btn:hover {
+            background: rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Info */
+        .solar-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .solar-info h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d4ff, #7c5cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .solar-info p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .solar-system-container { width: 350px; height: 350px; }
+            .sun { width: 50px; height: 50px; }
+            .orbit-1 { width: 70px; height: 70px; }
+            .orbit-2 { width: 100px; height: 100px; }
+            .orbit-3 { width: 135px; height: 135px; }
+            .orbit-4 { width: 170px; height: 170px; }
+            .orbit-5 { width: 220px; height: 220px; }
+            .orbit-6 { width: 270px; height: 270px; }
+            .orbit-7 { width: 310px; height: 310px; }
+            .orbit-8 { width: 340px; height: 340px; }
+            
+            .mercury { width: 8px; height: 8px; left: 35px; }
+            .venus { width: 12px; height: 12px; left: 50px; }
+            .earth { width: 13px; height: 13px; left: 67px; }
+            .mars { width: 10px; height: 10px; left: 85px; }
+            .jupiter { width: 30px; height: 30px; left: 110px; }
+            .saturn { width: 26px; height: 26px; left: 135px; }
+            .uranus { width: 18px; height: 18px; left: 155px; }
+            .neptune { width: 17px; height: 17px; left: 170px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <nav>
+        <div class="logo">🚀 PLANET LEARNING</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="materi.html">Materi</a></li>
+            <li><a href="planet.html" class="active">Planet</a></li>
+            <li><a href="kuis.html">Kuis</a></li>
+            <li><a href="games.html">Games</a></li>
+            <li><a href="fakta.html">Fakta</a></li>
+            <li><a href="perbandingan.html">Bandingkan</a></li>
+            <li><a href="video.html">Video</a></li>
+            <li><a href="info.html">Info</a></li>
+        </ul>
+    </nav>
+
+    <!-- SCROLL HORIZONTAL SECTION -->
+    <section class="planet-horizontal">
+        <div class="content-container" style="text-align: center; margin-bottom: 20px; padding-top: 80px;">
+            <h1 style="font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 2.5rem); background: linear-gradient(45deg, var(--accent), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🪐 EKSPLORASI TATA SURYA</h1>
+            <p style="color: #94a3b8; font-size: 1rem;">Geser ke kanan untuk menjelajahi planet, hingga ke simulasi Tata Surya!</p>
+        </div>
+
+        <div class="planet-scroll-container" id="planetScroll">
+            
+            <!-- Slide 0: Merkurius -->
+            <div class="planet-slide active" data-index="0">
+                <div class="planet-slide-content">
+                    <div class="planet-image-wrapper">
+                        <div class="planet-glow"></div>
+                        <img src="assets/images/merkurius.png" alt="Merkurius" class="planet-image">
+                    </div>
+                    <div class="planet-details">
+                        <span class="planet-number-badge">PLANET 01</span>
+                        <h2>MERKURIUS</h2>
+                        <p>Planet terdekat dengan Matahari dan yang terkecil di tata surya.</p>
+                        <div class="planet-stats-grid">
+                            <div class="stat-card"><strong>Jarak</strong><span>57,9 juta km</span></div>
+                            <div class="stat-card"><strong>Diameter</strong><span>4.879 km</span></div>
+                            <div class="stat-card"><strong>Suhu</strong><span>-173°C s/d 427°C</span></div>
+                            <div class="stat-card"><strong>Orbit</strong><span>88 hari Bumi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 1: Venus -->
+            <div class="planet-slide" data-index="1">
+                <div class="planet-slide-content">
+                    <div class="planet-image-wrapper">
+                        <div class="planet-glow"></div>
+                        <img src="assets/images/venus.png" alt="Venus" class="planet-image">
+                    </div>
+                    <div class="planet-details">
+                        <span class="planet-number-badge">PLANET 02</span>
+                        <h2>VENUS</h2>
+                        <p>Planet terpanas di tata surya dengan suhu mencapai 465°C!</p>
+                        <div class="planet-stats-grid">
+                            <div class="stat-card"><strong>Jarak</strong><span>108,2 juta km</span></div>
+                            <div class="stat-card"><strong>Diameter</strong><span>12.104 km</span></div>
+                            <div class="stat-card"><strong>Suhu</strong><span>465°C</span></div>
+                            <div class="stat-card"><strong>Orbit</strong><span>225 hari Bumi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: Bumi -->
+            <div class="planet-slide" data-index="2">
+                <div class="planet-slide-content">
+                    <div class="planet-image-wrapper">
+                        <div class="planet-glow"></div>
+                        <img src="assets/images/bumi.png" alt="Bumi" class="planet-image">
+                    </div>
+                    <div class="planet-details">
+                        <span class="planet-number-badge">PLANET 03</span>
+                        <h2>BUMI</h2>
+                        <p>Satu-satunya planet yang diketahui memiliki kehidupan!</p>
+                        <div class="planet-stats-grid">
+                            <div class="stat-card"><strong>Jarak</strong><span>149,6 juta km</span></div>
+                            <div class="stat-card"><strong>Diameter</strong><span>12.742 km</span></div>
+                            <div class="stat-card"><strong>Suhu</strong><span>-88°C s/d 58°C</span></div>
+                            <div class="stat-card"><strong>Orbit</strong><span>365,25 hari</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Mars -->
+            <div class="planet-slide" data-index="3">
+                <div class="planet-slide-content">
+                    <div class="planet-image-wrapper">
+                        <div class="planet-glow"></div>
+                        <img src="assets/images/mars.png" alt="Mars" class="planet-image">
+                    </div>
+                    <div class="planet-details">
+                        <span class="planet-number-badge">PLANET 04</span>
+                        <h2>MARS</h2>
+                        <p>Dikenal sebagai "Planet Merah". Memiliki gunung tertinggi.</p>
+                        <div class="planet-stats-grid">
+                            <div class="stat-card"><strong>Jarak</strong><span>227,9 juta km</span></div>
+                            <div class="stat-card"><strong>Diameter</strong><span>6.779 km</span></div>
+                            <div class="stat-card"><strong>Suhu</strong><span>-140°C s/d 20°C</span></div>
+                            <div class="stat-card"><strong>Orbit</strong><span>687 hari Bumi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Jupiter -->
+            <div class="planet-slide" data-index="4">
+                <div class="planet-slide-content">
+                    <div class="planet-image-wrapper">
+                        <div class="planet-glow"></div>
+                        <img src="assets/images/jupiter.png" alt="Jupiter" class="planet-image">
+                    </div>
+                    <div class="planet-details">
+                        <span class="planet-number-badge">PLANET 05</span>
+                        <h2>JUPITER</h2>
+                        <p>Planet terbesar di tata surya! Memiliki badai raksasa.</p>
+                        <div class="planet-stats-grid">
+                            <div class="stat-card"><strong>Jarak</strong><span>778,5 juta km</span></div>
+                            <div class="stat-card"><strong>Diameter</strong><span>139.820 km</span></div>
+                            <div class="stat-card"><strong>Suhu</strong><span>-108°C</span></div>
+                            <div class="stat-card"><strong>Orbit</strong><span>11,9 tahun Bumi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Saturnus -->
+            <div class="planet-slide" data-index="5">
+                <div class="planet-slide-content">
+                    <div class="planet-image-wrapper">
+                        <div class="planet-glow"></div>
+                        <img src="assets/images/saturnus.png" alt="Saturnus" class="planet-image">
+                    </div>
+                    <div class="planet-details">
+                        <span class="planet-number-badge">PLANET 06</span>
+                        <h2>SATURNUS</h2>
+                        <p>Terkenal dengan sistem cincinnya yang indah.</p>
+                        <div class="planet-stats-grid">
+                            <div class="stat-card"><strong>Jarak</strong><span>1,43 miliar km</span></div>
+                            <div class="stat-card"><strong>Diameter</strong><span>116.460 km</span></div>
+                            <div class="stat-card"><strong>Suhu</strong><span>-139°C</span></div>
+                            <div class="stat-card"><strong>Orbit</strong><span>29,5 tahun Bumi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6: Uranus -->
+            <div class="planet-slide" data-index="6">
+                <div class="planet-slide-content">
+                    <div class="planet-image-wrapper">
+                        <div class="planet-glow"></div>
+                        <img src="assets/images/uranus.png" alt="Uranus" class="planet-image">
+                    </div>
+                    <div class="planet-details">
+                        <span class="planet-number-badge">PLANET 07</span>
+                        <h2>URANUS</h2>
+                        <p>Planet yang berotasi miring hampir 98 derajat.</p>
+                        <div class="planet-stats-grid">
+                            <div class="stat-card"><strong>Jarak</strong><span>2,87 miliar km</span></div>
+                            <div class="stat-card"><strong>Diameter</strong><span>50.724 km</span></div>
+                            <div class="stat-card"><strong>Suhu</strong><span>-197°C</span></div>
+                            <div class="stat-card"><strong>Orbit</strong><span>84 tahun Bumi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7: Neptunus -->
+            <div class="planet-slide" data-index="7">
+                <div class="planet-slide-content">
+                    <div class="planet-image-wrapper">
+                        <div class="planet-glow"></div>
+                        <img src="assets/images/neptunus.png" alt="Neptunus" class="planet-image">
+                    </div>
+                    <div class="planet-details">
+                        <span class="planet-number-badge">PLANET 08</span>
+                        <h2>NEPTUNUS</h2>
+                        <p>Planet terjauh dengan angin tercepat di tata surya.</p>
+                        <div class="planet-stats-grid">
+                            <div class="stat-card"><strong>Jarak</strong><span>4,5 miliar km</span></div>
+                            <div class="stat-card"><strong>Diameter</strong><span>49.244 km</span></div>
+                            <div class="stat-card"><strong>Suhu</strong><span>-201°C</span></div>
+                            <div class="stat-card"><strong>Orbit</strong><span>165 tahun Bumi</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==========================================
+                 SLIDE 8: SOLAR SYSTEM (FULLY FIXED STRUCTURE)
+            ========================================== -->
+            <div class="planet-slide solar-slide" data-index="8">
+                <div class="solar-system-wrapper">
+                    <div class="solar-info">
+                        <h2>🌌 SIMULASI TATA SURYA</h2>
+                        <p>Amati orbit planet mengelilingi Matahari. Klik planet untuk info!</p>
+                    </div>
+
+                    <div class="solar-system-container">
+                        <!-- Matahari -->
+                        <div class="sun" data-planet="Matahari">
+                            <img src="assets/images/matahari.png" alt="Matahari">
+                        </div>
+
+                        <!-- Orbit Rings -->
+                        <div class="orbit orbit-1"></div>
+                        <div class="orbit orbit-2"></div>
+                        <div class="orbit orbit-3"></div>
+                        <div class="orbit orbit-4"></div>
+                        <div class="orbit orbit-5"></div>
+                        <div class="orbit orbit-6"></div>
+                        <div class="orbit orbit-7"></div>
+                        <div class="orbit orbit-8"></div>
+
+                        <!-- Planet-Planet -->
+                        <div class="planet-orbit mercury-orbit">
+                            <div class="planet mercury" data-planet="Merkurius">
+                                <img src="assets/images/merkurius.png" alt="Merkurius">
+                            </div>
+                        </div>
+                        <div class="planet-orbit venus-orbit">
+                            <div class="planet venus" data-planet="Venus">
+                                <img src="assets/images/venus.png" alt="Venus">
+                            </div>
+                        </div>
+                        <div class="planet-orbit earth-orbit">
+                            <div class="planet earth" data-planet="Bumi">
+                                <img src="assets/images/bumi.png" alt="Bumi">
+                                <div class="moon"></div>
+                            </div>
+                        </div>
+                        <div class="planet-orbit mars-orbit">
+                            <div class="planet mars" data-planet="Mars">
+                                <img src="assets/images/mars.png" alt="Mars">
+                            </div>
+                        </div>
+                        <div class="planet-orbit jupiter-orbit">
+                            <div class="planet jupiter" data-planet="Jupiter">
+                                <img src="assets/images/jupiter.png" alt="Jupiter">
+                            </div>
+                        </div>
+                        <div class="planet-orbit saturn-orbit">
+                            <div class="planet saturn" data-planet="Saturnus">
+                                <img src="assets/images/saturnus.png" alt="Saturnus">
+                            </div>
+                        </div>
+                        <div class="planet-orbit uranus-orbit">
+                            <div class="planet uranus" data-planet="Uranus">
+                                <img src="assets/images/uranus.png" alt="Uranus">
+                            </div>
+                        </div>
+                        <div class="planet-orbit neptune-orbit">
+                            <div class="planet neptune" data-planet="Neptunus">
+                                <img src="assets/images/neptunus.png" alt="Neptunus">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="solar-controls">
+                        <button class="solar-btn" id="pauseBtn">⏸ Pause</button>
+                        <button class="solar-btn" id="speedBtn">⚡ Speed Up</button>
+                        <button class="solar-btn" id="resetBtn">🔄 Reset</button>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- AKHIR DARI planet-scroll-container -->
+
+        <!-- Navigation Arrows -->
+        <div class="planet-nav-arrows">
+            <button class="nav-arrow" id="prevPlanet">‹</button>
+            <button class="nav-arrow" id="nextPlanet">›</button>
+        </div>
+
+        <!-- Progress Dots -->
+        <div class="planet-dots" id="planetDots">
+            <div class="planet-dot active" data-index="0"></div>
+            <div class="planet-dot" data-index="1"></div>
+            <div class="planet-dot" data-index="2"></div>
+            <div class="planet-dot" data-index="3"></div>
+            <div class="planet-dot" data-index="4"></div>
+            <div class="planet-dot" data-index="5"></div>
+            <div class="planet-dot" data-index="6"></div>
+            <div class="planet-dot" data-index="7"></div>
+            <div class="planet-dot" data-index="8">🌌</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Planet-Learning. Belajar jadi lebih menyenangkan! 🚀</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // ==========================================
+        // 1. HORIZONTAL SCROLL LOGIC
+        // ==========================================
+        const planetScroll = document.getElementById('planetScroll');
+        const slides = document.querySelectorAll('.planet-slide');
+        const dots = document.querySelectorAll('.planet-dot');
+        const prevBtn = document.getElementById('prevPlanet');
+        const nextBtn = document.getElementById('nextPlanet');
+        let currentIndex = 0;
+
+        function goToPlanet(index) {
+            if (index < 0) index = 0;
+            if (index >= slides.length) index = slides.length - 1;
+            currentIndex = index;
+            slides[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            slides.forEach(s => s.classList.remove('active'));
+            slides[index].classList.add('active');
+            dots.forEach(d => d.classList.remove('active'));
+            dots[index].classList.add('active');
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', () => goToPlanet(currentIndex - 1));
+        if (nextBtn) nextBtn.addEventListener('click', () => goToPlanet(currentIndex + 1));
+        dots.forEach(dot => dot.addEventListener('click', () => goToPlanet(parseInt(dot.dataset.index))));
+
+        if (planetScroll) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const index = parseInt(entry.target.dataset.index);
+                        currentIndex = index;
+                        slides.forEach(s => s.classList.remove('active'));
+                        entry.target.classList.add('active');
+                        dots.forEach(d => d.classList.remove('active'));
+                        dots[index].classList.add('active');
+                    }
+                });
+            }, { root: planetScroll, threshold: 0.5 });
+            slides.forEach(slide => observer.observe(slide));
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') goToPlanet(currentIndex - 1);
+            if (e.key === 'ArrowRight') goToPlanet(currentIndex + 1);
+        });
+
+        // ==========================================
+        // 2. SOLAR SYSTEM CONTROLS & CLICK EVENTS
+        // ==========================================
+        const planetOrbits = document.querySelectorAll('.planet-orbit');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const speedBtn = document.getElementById('speedBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const planets = document.querySelectorAll('.planet');
+
+        if (pauseBtn && planetOrbits.length > 0) {
+            let isPaused = false;
+            let speedMultiplier = 1;
+
+            // Tombol Pause/Play
+            pauseBtn.addEventListener('click', () => {
+                isPaused = !isPaused;
+                const state = isPaused ? 'paused' : 'running';
+                planetOrbits.forEach(p => p.style.animationPlayState = state);
+                planets.forEach(p => p.style.animationPlayState = state);
+                pauseBtn.textContent = isPaused ? '▶ Play' : '⏸ Pause';
+            });
+
+            // Tombol Speed Up
+            speedBtn.addEventListener('click', () => {
+                speedMultiplier = speedMultiplier === 1 ? 3 : (speedMultiplier === 3 ? 5 : 1);
+                planetOrbits.forEach(p => {
+                    const base = parseFloat(p.dataset.baseDuration) || parseFloat(getComputedStyle(p).animationDuration);
+                    if (!p.dataset.baseDuration) p.dataset.baseDuration = getComputedStyle(p).animationDuration;
+                    p.style.animationDuration = (base / speedMultiplier) + 's';
+                });
+                planets.forEach(p => {
+                    const base = parseFloat(p.dataset.baseDuration) || parseFloat(getComputedStyle(p).animationDuration);
+                    if (!p.dataset.baseDuration) p.dataset.baseDuration = getComputedStyle(p).animationDuration;
+                    p.style.animationDuration = (base / speedMultiplier) + 's';
+                });
+                speedBtn.textContent = speedMultiplier === 1 ? '⚡ Speed Up' : `⚡ ${speedMultiplier}x`;
+            });
+
+            // Tombol Reset
+            resetBtn.addEventListener('click', () => {
+                isPaused = false;
+                speedMultiplier = 1;
+                planetOrbits.forEach(p => {
+                    p.style.animation = 'none';
+                    void p.offsetWidth;
+                    p.style.animation = '';
+                    p.style.animationPlayState = 'running';
+                    delete p.dataset.baseDuration;
+                });
+                planets.forEach(p => {
+                    p.style.animation = 'none';
+                    void p.offsetWidth;
+                    p.style.animation = '';
+                    p.style.animationPlayState = 'running';
+                    delete p.dataset.baseDuration;
+                });
+                pauseBtn.textContent = '⏸ Pause';
+                speedBtn.textContent = '⚡ Speed Up';
+            });
+
+            // Event Klik untuk Planet
+            planets.forEach(p => {
+                p.addEventListener('click', () => {
+                    alert(`🪐 ${p.dataset.planet}\n\nKlik OK untuk lanjut!`);
+                });
+            });
+
+            // Event Klik untuk Matahari
+            const sunElement = document.querySelector('.sun');
+            if (sunElement) {
+                sunElement.addEventListener('click', () => {
+                    alert(`☀️ Matahari\n\nPusat tata surya kita!\nSuhu permukaan: 5.500°C\n\nKlik OK untuk lanjut!`);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

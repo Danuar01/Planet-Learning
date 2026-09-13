@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Info | Planet-Learning</title>
+    <!-- Google Fonts Playful & Kartun -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cartoon-dark: #1e1b4b;
+            --cartoon-yellow: #ffd166;
+            --cartoon-pink: #ff3366;
+            --cartoon-blue: #3b82f6;
+            --cartoon-green: #06d6a0;
+            --cartoon-cyan: #00f2fe;
+            --cartoon-orange: #ff9f1c;
+            --cartoon-purple: #8b5cf6;
+            --comic-border: 3px solid var(--cartoon-dark);
+            --comic-shadow: 0 5px 0 var(--cartoon-dark);
+            --comic-shadow-sm: 0 3px 0 var(--cartoon-dark);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: radial-gradient(circle at 50% 20%, #311b92 0%, #150f42 55%, #090524 100%);
+            color: #ffffff;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 25px;
+        }
+
+        /* Matikan portrait blocker agar HP tegak bisa langsung dibuka */
+        .landscape-blocker {
+            display: none !important;
+        }
+
+        /* ===== BACKGROUND VIDEO & STARS ===== */
+        .video-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -3; overflow: hidden;
+        }
+        .video-bg video {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.35; filter: saturate(1.8);
+        }
+        .video-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.25) 0%, rgba(15, 10, 40, 0.85) 100%);
+            z-index: -2;
+        }
+
+        .stars {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
+        }
+        .star {
+            position: absolute; background: #ffffff;
+            border-radius: 50%; animation: twinkle 2s infinite ease-in-out alternate;
+            box-shadow: 0 0 6px #ffffff, 0 0 10px var(--cartoon-cyan);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.6); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* ===== NAVBAR RAPI UNTUK HP ===== */
+        header {
+            position: fixed;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+
+        nav {
+            width: 100%;
+            max-width: 480px;
+            height: 52px;
+            padding: 0 16px;
+            background: linear-gradient(180deg, #ffea79 0%, #ffd166 100%);
+            border: var(--comic-border);
+            border-radius: 50px;
+            box-shadow: var(--comic-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.15rem;
+            color: var(--cartoon-dark);
+            text-shadow: 1.5px 1.5px 0 #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .logo-icon {
+            font-size: 1.35rem;
+            animation: rocketWiggle 2.5s infinite ease-in-out;
+        }
+        @keyframes rocketWiggle {
+            0%, 100% { transform: rotate(-8deg); }
+            50% { transform: rotate(12deg); }
+        }
+
+        .menu-toggle {
+            background: #ffffff;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            color: var(--cartoon-dark);
+            cursor: pointer;
+            box-shadow: 0 2px 0 var(--cartoon-dark);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .menu-toggle:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        /* Drawer Menu HP */
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(15, 10, 42, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .mobile-drawer.open { display: flex; }
+
+        .drawer-box {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 26px;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            width: 100%; max-width: 320px;
+            padding: 24px 20px;
+            display: flex; flex-direction: column; gap: 12px;
+            text-align: center;
+            animation: popModal 0.25s ease;
+        }
+        @keyframes popModal {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .drawer-box h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--cartoon-dark);
+            font-size: 1.4rem;
+        }
+        .drawer-box a {
+            text-decoration: none;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem;
+            color: var(--cartoon-dark);
+            background: #f8fafc;
+            border: 2px solid var(--cartoon-dark);
+            padding: 10px;
+            border-radius: 16px;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+        }
+        .drawer-box a.active {
+            background: var(--cartoon-yellow);
+        }
+        .btn-close-drawer {
+            margin-top: 6px;
+            background: var(--cartoon-pink);
+            color: #fff;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 16px;
+            padding: 8px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+        }
+
+        /* ===== CONTENT PAGE ===== */
+        .content-page {
+            padding: 85px 16px 40px;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--cartoon-pink);
+            color: #ffffff;
+            padding: 5px 16px;
+            border-radius: 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            border: 2.5px solid var(--cartoon-dark);
+            box-shadow: var(--comic-shadow-sm);
+            margin-bottom: 10px;
+            animation: bounceBadge 2.4s infinite ease-in-out;
+        }
+        @keyframes bounceBadge {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .page-header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.1rem;
+            color: #ffffff;
+            text-shadow: 
+                -2px -2px 0 var(--cartoon-dark),
+                 2px -2px 0 var(--cartoon-dark),
+                -2px  2px 0 var(--cartoon-dark),
+                 2px  2px 0 var(--cartoon-dark),
+                 0 6px 0 var(--cartoon-dark);
+            margin-bottom: 6px;
+        }
+        .page-header p {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: #e0e7ff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+            line-height: 1.45;
+        }
+
+        /* WADAH KARTUN UTAMA */
+        .info-container {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 26px;
+            padding: 24px 18px;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            color: var(--cartoon-dark);
+            position: relative;
+        }
+        .info-container::before {
+            content: '';
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; height: 22px;
+            background: var(--cartoon-yellow);
+            border-radius: 22px 22px 0 0;
+            border: var(--comic-border);
+            border-bottom: none;
+        }
+
+        /* PROFIL PENGEMBANG */
+        .developer-profile {
+            background: linear-gradient(145deg, #fffbeb 0%, #fef08a 100%);
+            border: 2.5px solid var(--cartoon-dark);
+            border-radius: 22px;
+            padding: 22px 14px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: 0 5px 0 var(--cartoon-dark);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: var(--comic-border);
+            box-shadow: 0 5px 0 var(--cartoon-dark);
+            margin-bottom: 12px;
+            background: #ffffff;
+        }
+
+        .developer-profile h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.4rem;
+            color: var(--cartoon-dark);
+            margin-bottom: 4px;
+            line-height: 1.25;
+        }
+
+        .developer-profile .role {
+            display: inline-block;
+            background: var(--cartoon-pink);
+            color: #ffffff;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: 2px solid var(--cartoon-dark);
+            box-shadow: 0 2.5px 0 var(--cartoon-dark);
+            margin-bottom: 14px;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #ffffff;
+            padding: 12px 14px;
+            border-radius: 16px;
+            border: 2px solid var(--cartoon-dark);
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            text-align: left;
+        }
+
+        .detail-item {
+            background: #f8fafc;
+            border: 1.5px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 6px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-item span {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .detail-item strong {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.88rem;
+            color: var(--cartoon-dark);
+            text-align: right;
+        }
+
+        /* SECTION HEADINGS */
+        .info-container h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--cartoon-dark);
+            margin: 24px 0 10px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px dashed #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .info-container p {
+            color: #475569;
+            line-height: 1.55;
+            margin-bottom: 12px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-align: justify;
+        }
+
+        /* LIST STIKER */
+        .info-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-container li {
+            position: relative;
+            background: #f8fafc;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 14px;
+            padding: 9px 12px 9px 34px;
+            color: #334155;
+            font-size: 0.88rem;
+            font-weight: 700;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            line-height: 1.45;
+        }
+
+        .info-container li::before {
+            content: '⭐';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.95rem;
+        }
+
+        .info-container li strong {
+            color: var(--cartoon-blue);
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.92rem;
+        }
+
+        /* TECH STACK BADGES */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tech-badge {
+            padding: 6px 12px;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 16px;
+            font-size: 0.82rem;
+            color: var(--cartoon-dark);
+            font-family: 'Fredoka One', cursive;
+            box-shadow: 0 2.5px 0 var(--cartoon-dark);
+        }
+
+        .tech-badge:nth-child(1) { background: #fee2e2; }
+        .tech-badge:nth-child(2) { background: #e0e7ff; }
+        .tech-badge:nth-child(3) { background: #fef08a; }
+        .tech-badge:nth-child(4) { background: #dcfce7; }
+        .tech-badge:nth-child(5) { background: #fce7f3; }
+        .tech-badge:nth-child(6) { background: #f3e8ff; }
+
+        footer {
+            text-align: center;
+            padding: 16px;
+            background: #ffffff;
+            color: var(--cartoon-dark);
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.82rem;
+            border-top: var(--comic-border);
+            margin-top: 35px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- VIDEO BACKGROUND -->
+    <div class="video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-star-field-in-space-2639-large.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="stars" id="stars"></div>
+    
+    <!-- NAVBAR -->
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span>Planet-Learning</span>
+            </a>
+            <button class="menu-toggle" onclick="toggleMenuDrawer(true)">
+                <span>Menu</span> ☰
+            </button>
+        </nav>
+    </header>
+
+    <!-- MOBILE DRAWER MENU -->
+    <div class="mobile-drawer" id="mobileDrawer" onclick="closeDrawerOutside(event)">
+        <div class="drawer-box">
+            <h3>🪐 PILIH MENU</h3>
+            <a href="index.html">🏠 Beranda</a>
+            <a href="materi.html">📚 Belajar & Materi</a>
+            <a href="games.html">🎮 Arena Games</a>
+            <a href="info.html" class="active" onclick="toggleMenuDrawer(false)">ℹ️ Tentang Kami</a>
+            <button class="btn-close-drawer" onclick="toggleMenuDrawer(false)">Tutup ✕</button>
+        </div>
+    </div>
+
+    <main class="content-page">
+        <div class="page-header">
+            <div class="header-badge">ℹ️ Mengenal Planet-Learning</div>
+            <h1>TENTANG KAMI</h1>
+            <p>Informasi seputar website Planet-Learning dan sang pengembang hebat!</p>
+        </div>
+        
+        <div class="info-container">
+            <!-- Profil Pengembang -->
+            <div class="developer-profile">
+                <img src="assets/images/wanita.jpg" alt="Dyan Hayuningtrisna Hadiwangsa" class="profile-photo" onerror="this.src='https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300'">
+                <h2>Dyan Hayuningtrisna Hadiwangsa</h2>
+                <div class="role">👩‍🚀 Pengembang & Desainer Edukasi</div>
+                
+                <div class="profile-details">
+                    <div class="detail-item">
+                        <span>NIM</span>
+                        <strong>F2211251034</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Universitas</span>
+                        <strong>Universitas Tanjungpura</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Karya Proyek</span>
+                        <strong>Planet-Learning</strong>
+                    </div>
+                </div>
+            </div>
+
+            <h3>🌌 Tentang Planet-Learning</h3>
+            <p>Planet-Learning adalah website edukasi interaktif yang dirancang khusus untuk membuat pembelajaran astronomi menjadi seru, ceria, dan mudah dipahami oleh anak-anak Indonesia. Website ini dibuat sebagai media belajar modern dengan konsep petualangan luar angkasa penuh warna!</p>
+
+            <h3>🎯 Tujuan </h3>
+            <ul>
+                <li>Menyediakan materi astronomi yang mudah dipahami dan terstruktur rapi.</li>
+                <li>Membelajarkan melalui metode interaktif dan game petualangan seru.</li>
+                <li>Menumbuhkan rasa ingin tahu anak-anak terhadap rahasia alam semesta.</li>
+                <li>Menjadi sumber belajar gratis dan menyenangkan untuk pelajar Indonesia.</li>
+                <li>Memberikan pengalaman belajar visual yang modern dan ramah anak.</li>
+            </ul>
+
+            <h3>📚 Sumber Referensi</h3>
+            <ul>
+                <li><strong>NASA</strong> — Solar System Exploration</li>
+                <li><strong>ESA</strong> — European Space Agency</li>
+                <li><strong>BRIN</strong> — Badan Riset dan Inovasi Nasional</li>
+                <li><strong>Space.com</strong> — Berita & Edukasi Antariksa</li>
+            </ul>
+
+            <h3>💌 Catatan Pengembang</h3>
+            <p>Website ini dikembangkan dengan dedikasi tinggi dan penuh keceriaan untuk menghadirkan pengalaman belajar yang segar. Semoga Planet-Learning dapat menginspirasi teman-teman kecil untuk terus bermimpi setinggi bintang dan menjelajahi keajaiban tata surya kita! 🚀✨</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Planet-Learning. Belajar jadi lebih menyenangkan! 🚀✨</p>
+    </footer>
+
+    <script>
+        // Generator Bintang Latar
+        const starsContainer = document.getElementById('stars');
+        if (starsContainer) {
+            for (let i = 0; i < 35; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Toggle Drawer Menu HP
+        function toggleMenuDrawer(isOpen) {
+            const drawer = document.getElementById('mobileDrawer');
+            if (isOpen) {
+                drawer.classList.add('open');
+            } else {
+                drawer.classList.remove('open');
+            }
+        }
+
+        function closeDrawerOutside(e) {
+            if (e.target === document.getElementById('mobileDrawer')) {
+                toggleMenuDrawer(false);
+            }
+        }
+    </script>
+</body>
+</html>

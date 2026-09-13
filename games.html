@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arena Game Antariksa | Planet-Learning</title>
+    <!-- Google Fonts Playful & Kartun -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Confetti untuk Perayaan Menang -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --cartoon-dark: #1e1b4b;
+            --cartoon-yellow: #ffd166;
+            --cartoon-pink: #ff3366;
+            --cartoon-blue: #3b82f6;
+            --cartoon-green: #06d6a0;
+            --cartoon-cyan: #00f2fe;
+            --cartoon-orange: #ff9f1c;
+            --cartoon-purple: #8b5cf6;
+            --comic-border: 3px solid var(--cartoon-dark);
+            --comic-shadow: 0 5px 0 var(--cartoon-dark);
+            --comic-shadow-sm: 0 3px 0 var(--cartoon-dark);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: radial-gradient(circle at 50% 20%, #311b92 0%, #150f42 55%, #090524 100%);
+            color: #ffffff;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 25px;
+        }
+
+        /* Matikan portrait blocker agar HP tegak bisa langsung bermain */
+        .landscape-blocker {
+            display: none !important;
+        }
+
+        /* ===== BACKGROUND VIDEO & STARS ===== */
+        .video-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -3; overflow: hidden;
+        }
+        .video-bg video {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.35; filter: saturate(1.8);
+        }
+        .video-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.25) 0%, rgba(15, 10, 40, 0.85) 100%);
+            z-index: -2;
+        }
+
+        .stars {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
+        }
+        .star {
+            position: absolute; background: #ffffff;
+            border-radius: 50%; animation: twinkle 2s infinite ease-in-out alternate;
+            box-shadow: 0 0 6px #ffffff, 0 0 10px var(--cartoon-cyan);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.6); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* ===== NAVBAR RAPI UNTUK HP ===== */
+        header {
+            position: fixed;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+
+        nav {
+            width: 100%;
+            max-width: 480px;
+            height: 52px;
+            padding: 0 16px;
+            background: linear-gradient(180deg, #ffea79 0%, #ffd166 100%);
+            border: var(--comic-border);
+            border-radius: 50px;
+            box-shadow: var(--comic-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.15rem;
+            color: var(--cartoon-dark);
+            text-shadow: 1.5px 1.5px 0 #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .logo-icon {
+            font-size: 1.35rem;
+            animation: rocketWiggle 2.5s infinite ease-in-out;
+        }
+        @keyframes rocketWiggle {
+            0%, 100% { transform: rotate(-8deg); }
+            50% { transform: rotate(12deg); }
+        }
+
+        .menu-toggle {
+            background: #ffffff;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            color: var(--cartoon-dark);
+            cursor: pointer;
+            box-shadow: 0 2px 0 var(--cartoon-dark);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .menu-toggle:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        /* Drawer Menu HP */
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(15, 10, 40, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .mobile-drawer.open { display: flex; }
+
+        .drawer-box {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 26px;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            width: 100%; max-width: 320px;
+            padding: 24px 20px;
+            display: flex; flex-direction: column; gap: 12px;
+            text-align: center;
+            animation: popModal 0.25s ease;
+        }
+        @keyframes popModal {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .drawer-box h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--cartoon-dark);
+            font-size: 1.4rem;
+        }
+        .drawer-box a {
+            text-decoration: none;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem;
+            color: var(--cartoon-dark);
+            background: #f8fafc;
+            border: 2px solid var(--cartoon-dark);
+            padding: 10px;
+            border-radius: 16px;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+        }
+        .drawer-box a.active {
+            background: var(--cartoon-yellow);
+        }
+        .btn-close-drawer {
+            margin-top: 6px;
+            background: var(--cartoon-pink);
+            color: #fff;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 16px;
+            padding: 8px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+        }
+
+        /* ===== CONTAINER GAME ===== */
+        .game-wrapper {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 85px 16px 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--cartoon-pink);
+            color: #ffffff;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            border: 2.5px solid var(--cartoon-dark);
+            box-shadow: var(--comic-shadow-sm);
+            margin-bottom: 10px;
+        }
+
+        .game-nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            gap: 10px;
+        }
+
+        .action-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--cartoon-dark);
+            text-decoration: none;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            padding: 8px 14px;
+            border-radius: 30px;
+            background: #ffffff;
+            border: 2.5px solid var(--cartoon-dark);
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            cursor: pointer;
+        }
+        .action-link-btn:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .screen-section {
+            display: none;
+            animation: popScreen 0.3s ease;
+        }
+        .screen-section.active { display: block; }
+        @keyframes popScreen {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* ===== 1. SCREEN HUB ===== */
+        .hub-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .hub-title h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.1rem;
+            color: #ffffff;
+            text-shadow: 
+                -2px -2px 0 var(--cartoon-dark),
+                 2px -2px 0 var(--cartoon-dark),
+                -2px  2px 0 var(--cartoon-dark),
+                 2px  2px 0 var(--cartoon-dark),
+                 0 6px 0 var(--cartoon-dark);
+            margin-bottom: 6px;
+        }
+        .hub-title p {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #e0e7ff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .hub-cards-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        .hub-card {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 26px;
+            padding: 24px 18px 20px;
+            text-align: center;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hub-card::before {
+            content: '';
+            position: absolute;
+            top: -3px; left: -3px; right: -3px; height: 22px;
+            border-radius: 22px 22px 0 0;
+            border: var(--comic-border);
+            border-bottom: none;
+        }
+        .card-order::before { background: var(--cartoon-yellow); }
+        .card-memory::before { background: var(--cartoon-cyan); }
+
+        .hub-card:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 var(--cartoon-dark);
+        }
+        .hub-icon {
+            font-size: 3.5rem;
+            margin: 4px 0 8px;
+            line-height: 1;
+        }
+        .hub-card h3 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.45rem;
+            color: var(--cartoon-dark);
+            margin-bottom: 6px;
+        }
+        .hub-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 18px;
+        }
+
+        /* ===== 2. GAME 1: URUTKAN PLANET ===== */
+        .order-board-wrapper {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 24px;
+            padding: 18px 14px;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            color: var(--cartoon-dark);
+        }
+        .sun-anchor {
+            background: #fffbeb;
+            border: 2px dashed #f59e0b;
+            border-radius: 16px;
+            padding: 10px 14px;
+            text-align: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.95rem;
+            color: #b45309;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* 8 Slot Disusun 4x2 di Layar HP */
+        .slots-shelf {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+        .planet-slot {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: 14px;
+            min-height: 75px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            position: relative;
+        }
+        .planet-slot.filled {
+            border: 2.5px solid var(--cartoon-dark);
+            background: #ffffff;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            cursor: pointer;
+        }
+        .planet-slot.correct {
+            border-color: #059669;
+            background: #dcfce7;
+        }
+        .planet-slot.wrong {
+            border-color: #dc2626;
+            background: #fee2e2;
+        }
+        .slot-index {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-bottom: 2px;
+        }
+        .slot-img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+        .slot-name {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.72rem;
+            color: var(--cartoon-dark);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .bank-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.9rem;
+            color: #475569;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .pool-shelf {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            background: #f1f5f9;
+            padding: 12px 10px;
+            border-radius: 18px;
+            border: 2.5px solid var(--cartoon-dark);
+            min-height: 60px;
+        }
+        .pool-planet-btn {
+            background: #ffffff;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 14px;
+            padding: 6px 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            color: var(--cartoon-dark);
+        }
+        .pool-planet-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--cartoon-dark);
+        }
+        .pool-planet-btn img {
+            width: 22px;
+            height: 22px;
+            object-fit: contain;
+        }
+
+        /* ===== 3. GAME 2: MEMORY PLANET ===== */
+        .game-info {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 16px;
+            text-align: center;
+            border: 2.5px solid var(--cartoon-dark);
+            box-shadow: 0 4px 0 var(--cartoon-dark);
+            flex: 1;
+            max-width: 110px;
+        }
+        .info-box:nth-child(1) { background: #fffbeb; }
+        .info-box:nth-child(2) { background: #dcfce7; }
+        .info-box:nth-child(3) { background: #e0f2fe; }
+        .info-label {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.72rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .info-value {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.4rem;
+            color: var(--cartoon-dark);
+            margin-top: 1px;
+            line-height: 1;
+        }
+
+        /* Grid 4x4 Pas di Layar HP */
+        .memory-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+        }
+        .memory-card {
+            aspect-ratio: 1;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.4s ease;
+        }
+        .memory-card.flipped { transform: rotateY(180deg); }
+        .memory-card.matched {
+            animation: matchCelebration 0.5s ease forwards;
+            pointer-events: none;
+        }
+        @keyframes matchCelebration {
+            0%, 100% { transform: rotateY(180deg) scale(1); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+        }
+
+        .card-side {
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2.5px solid var(--cartoon-dark);
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+        }
+        .card-front {
+            background: linear-gradient(145deg, #ffd166 0%, #ff9f1c 50%, #ff3366 100%);
+        }
+        .card-front::before {
+            content: '⭐';
+            font-size: 1.8rem;
+            filter: drop-shadow(0 2px 0 rgba(30, 27, 75, 0.4));
+        }
+        .card-back {
+            background: radial-gradient(circle, #ffffff 60%, #e0f2fe 100%);
+            transform: rotateY(180deg);
+            padding: 6px;
+        }
+        .card-back img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+        }
+        .memory-card.matched .card-back {
+            background: radial-gradient(circle, #ffffff 50%, #bbf7d0 100%);
+            border-color: #059669;
+        }
+
+        /* TOMBOL 3D UMUM */
+        .cartoon-btn {
+            padding: 12px 24px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem;
+            border: var(--comic-border);
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: var(--comic-shadow);
+        }
+        .cartoon-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 var(--cartoon-dark);
+        }
+        .btn-green { background: linear-gradient(180deg, #10e3ab 0%, #06d6a0 100%); color: #ffffff; }
+        .btn-yellow { background: linear-gradient(180deg, #ffea79 0%, #ffd166 100%); color: var(--cartoon-dark); }
+        .btn-blue { background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%); color: #ffffff; }
+
+        /* WIN MODAL POPUP */
+        .win-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            padding: 28px 20px;
+            border-radius: 28px;
+            text-align: center;
+            z-index: 3001;
+            border: 4px solid var(--cartoon-dark);
+            box-shadow: 0 10px 0 var(--cartoon-dark), 0 20px 35px rgba(0, 0, 0, 0.4);
+            max-width: 360px;
+            width: 88%;
+        }
+        .win-modal.show {
+            display: block;
+            animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        .win-modal h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2rem;
+            color: var(--cartoon-dark);
+            margin-bottom: 6px;
+        }
+        .win-modal p {
+            font-size: 0.95rem;
+            color: #475569;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.45;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 10, 42, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 3000;
+        }
+        .overlay.show { display: block; }
+
+        footer {
+            text-align: center;
+            padding: 18px 16px;
+            background: #ffffff;
+            color: var(--cartoon-dark);
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.82rem;
+            border-top: var(--comic-border);
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- VIDEO BACKGROUND -->
+    <div class="video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-star-field-in-space-2639-large.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <div class="stars" id="stars"></div>
+    
+    <!-- NAVBAR -->
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🚀</span>
+                <span>Planet-Learning</span>
+            </a>
+            <button class="menu-toggle" onclick="toggleMenuDrawer(true)">
+                <span>Menu</span> ☰
+            </button>
+        </nav>
+    </header>
+
+    <!-- MOBILE DRAWER MENU -->
+    <div class="mobile-drawer" id="mobileDrawer" onclick="closeDrawerOutside(event)">
+        <div class="drawer-box">
+            <h3>🪐 PILIH MENU</h3>
+            <a href="index.html">🏠 Beranda</a>
+            <a href="materi.html">📚 Belajar & Materi</a>
+            <a href="games.html" class="active" onclick="toggleMenuDrawer(false)">🎮 Arena Games</a>
+            <a href="info.html">ℹ️ Tentang Kami</a>
+            <button class="btn-close-drawer" onclick="toggleMenuDrawer(false)">Tutup ✕</button>
+        </div>
+    </div>
+
+    <main class="game-wrapper">
+        <!-- ================= 1. SCREEN HUB: PILIH GAME ================= -->
+        <section id="screenHub" class="screen-section active">
+            <div class="hub-title">
+                <div class="header-badge">🎮 Arena Bermain Edukasi</div>
+                <h1>PILIH PERMAINAN</h1>
+                <p>Mau mencoba petualangan yang mana hari ini?</p>
+            </div>
+
+            <div class="hub-cards-grid">
+                <!-- Pilihan Game 1 -->
+                <div class="hub-card card-order" onclick="openGame('order')">
+                    <div class="hub-icon">🪐</div>
+                    <h3>Urutkan Planet</h3>
+                    <p>Susun 8 planet sesuai urutan jaraknya dari yang paling dekat dengan Matahari!</p>
+                    <button class="cartoon-btn btn-yellow" style="width: 100%;">🚀 Main Game 1</button>
+                </div>
+
+                <!-- Pilihan Game 2 -->
+                <div class="hub-card card-memory" onclick="openGame('memory')">
+                    <div class="hub-icon">🧩</div>
+                    <h3>Cocokkan Planet</h3>
+                    <p>Asah ingatanmu! Buka kartu dan cari pasangan planet kembar yang sama.</p>
+                    <button class="cartoon-btn btn-blue" style="width: 100%;">⭐ Main Game 2</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 2. SCREEN GAME 1: URUTKAN PLANET ================= -->
+        <section id="screenOrderGame" class="screen-section">
+            <div class="game-nav-bar">
+                <button class="action-link-btn" onclick="openGame('hub')">⬅ Pilih Game</button>
+                <a href="index.html" class="action-link-btn">🏠 Beranda</a>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 16px;">
+                <h2 style="font-family: 'Fredoka One', cursive; font-size: 1.6rem; text-shadow: -2px -2px 0 var(--cartoon-dark), 2px -2px 0 var(--cartoon-dark), -2px 2px 0 var(--cartoon-dark), 2px 2px 0 var(--cartoon-dark), 0 4px 0 var(--cartoon-dark);">🪐 URUTKAN PLANET</h2>
+                <p style="font-size: 0.85rem; font-weight: 700; color: #e0e7ff; margin-top: 4px;">Ketuk planet di bawah untuk mengisi slot urutan!</p>
+            </div>
+
+            <div class="order-board-wrapper">
+                <div class="sun-anchor">
+                    <span>☀️</span> MATAHARI (Awal Urutan) <span>➡️</span>
+                </div>
+
+                <!-- 8 Slot Urutan Planet (4x2 di HP) -->
+                <div class="slots-shelf" id="orderSlots"></div>
+
+                <!-- Kolam Planet yang Bisa Dipilih -->
+                <div class="bank-title">Pilih planet untuk slot berikutnya:</div>
+                <div class="pool-shelf" id="planetPool"></div>
+
+                <div style="display: flex; justify-content: center; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
+                    <button class="cartoon-btn btn-yellow" onclick="resetOrderGame()">🔄 Reset</button>
+                    <button class="cartoon-btn btn-green" onclick="checkOrderResult()">✅ Periksa</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 3. SCREEN GAME 2: MEMORY PLANET ================= -->
+        <section id="screenMemoryGame" class="screen-section">
+            <div class="game-nav-bar">
+                <button class="action-link-btn" onclick="openGame('hub')">⬅ Pilih Game</button>
+                <a href="index.html" class="action-link-btn">🏠 Beranda</a>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 16px;">
+                <h2 style="font-family: 'Fredoka One', cursive; font-size: 1.6rem; text-shadow: -2px -2px 0 var(--cartoon-dark), 2px -2px 0 var(--cartoon-dark), -2px 2px 0 var(--cartoon-dark), 2px 2px 0 var(--cartoon-dark), 0 4px 0 var(--cartoon-dark);">🧩 COCOKKAN KARTU</h2>
+                <p style="font-size: 0.85rem; font-weight: 700; color: #e0e7ff; margin-top: 4px;">Buka dan temukan 8 pasang planet kembar!</p>
+            </div>
+
+            <div class="game-info">
+                <div class="info-box">
+                    <div class="info-label">Langkah</div>
+                    <div class="info-value" id="moves">0</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Cocok</div>
+                    <div class="info-value" id="matches">0/8</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Waktu</div>
+                    <div class="info-value" id="timer">0:00</div>
+                </div>
+            </div>
+
+            <!-- Grid 4x4 Kartu -->
+            <div class="memory-board" id="memoryBoard"></div>
+
+            <div style="display: flex; justify-content: center; margin-top: 22px;">
+                <button class="cartoon-btn btn-green" onclick="initMemoryGame()">🔄 Acak & Main Lagi</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL POPUP KEMENANGAN -->
+    <div class="overlay" id="overlay"></div>
+    <div class="win-modal" id="winModal">
+        <div style="font-size: 3rem; margin-bottom: 4px;">🎉</div>
+        <h2 id="winModalTitle">Hore, Hebat!</h2>
+        <p id="winModalText">Misi kamu berhasil diselesaikan!</p>
+        <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+            <button class="cartoon-btn btn-green" id="winModalActionBtn">🔄 Main Lagi</button>
+            <button class="cartoon-btn btn-yellow" onclick="closeWinModal(); openGame('hub');">🎮 Ganti Game</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Planet-Learning. Belajar jadi seru! 🚀✨</p>
+    </footer>
+
+    <script>
+        // DATA 8 PLANET
+        const planetList = [
+            { id: 1, name: 'Merkurius', img: 'assets/images/merkurius.png', fallback: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Full%20Moon.png' },
+            { id: 2, name: 'Venus', img: 'assets/images/venus.png', fallback: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/First%20Quarter%20Moon.png' },
+            { id: 3, name: 'Bumi', img: 'assets/images/bumi.png', fallback: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Globe%20Showing%20Asia-Australia.png' },
+            { id: 4, name: 'Mars', img: 'assets/images/mars.png', fallback: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Ringed%20Planet.png' },
+            { id: 5, name: 'Jupiter', img: 'assets/images/jupiter.png', fallback: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Sun%20Behind%20Cloud.png' },
+            { id: 6, name: 'Saturnus', img: 'assets/images/saturnus.png', fallback: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Ringed%20Planet.png' },
+            { id: 7, name: 'Uranus', img: 'assets/images/uranus.png', fallback: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/New%20Moon.png' },
+            { id: 8, name: 'Neptunus', img: 'assets/images/neptunus.png', fallback: 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Full%20Moon.png' }
+        ];
+
+        // 1. GENERATOR BINTANG
+        const starsContainer = document.getElementById('stars');
+        if (starsContainer) {
+            for (let i = 0; i < 35; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Toggle Drawer Menu HP
+        function toggleMenuDrawer(isOpen) {
+            const drawer = document.getElementById('mobileDrawer');
+            if (isOpen) {
+                drawer.classList.add('open');
+            } else {
+                drawer.classList.remove('open');
+            }
+        }
+
+        function closeDrawerOutside(e) {
+            if (e.target === document.getElementById('mobileDrawer')) {
+                toggleMenuDrawer(false);
+            }
+        }
+
+        // 2. NAVIGASI SCREEN SWITCHER
+        function openGame(gameType) {
+            document.querySelectorAll('.screen-section').forEach(s => s.classList.remove('active'));
+            closeWinModal();
+
+            if (gameType === 'order') {
+                document.getElementById('screenOrderGame').classList.add('active');
+                initOrderGame();
+            } else if (gameType === 'memory') {
+                document.getElementById('screenMemoryGame').classList.add('active');
+                initMemoryGame();
+            } else {
+                document.getElementById('screenHub').classList.add('active');
+                stopMemoryTimer();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ================= LOGIKA GAME 1: URUTKAN PLANET =================
+        let placedPlanets = [null, null, null, null, null, null, null, null];
+        let availablePlanets = [];
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        function initOrderGame() {
+            placedPlanets = [null, null, null, null, null, null, null, null];
+            availablePlanets = shuffle(planetList);
+            renderOrderUI();
+        }
+
+        function renderOrderUI() {
+            const slotsContainer = document.getElementById('orderSlots');
+            const poolContainer = document.getElementById('planetPool');
+            slotsContainer.innerHTML = '';
+            poolContainer.innerHTML = '';
+
+            // Render 8 Slot
+            placedPlanets.forEach((p, idx) => {
+                const slot = document.createElement('div');
+                slot.className = `planet-slot ${p ? 'filled' : ''}`;
+                
+                if (p) {
+                    slot.innerHTML = `
+                        <span class="slot-index">Ke-${idx + 1}</span>
+                        <img src="${p.img}" alt="${p.name}" class="slot-img" onerror="this.src='${p.fallback}'">
+                        <span class="slot-name">${p.name}</span>
+                    `;
+                    slot.onclick = () => returnPlanetToPool(idx);
+                } else {
+                    slot.innerHTML = `
+                        <span class="slot-index">Slot ${idx + 1}</span>
+                        <span style="font-size: 1.1rem; color: #cbd5e1;">❓</span>
+                    `;
+                }
+                slotsContainer.appendChild(slot);
+            });
+
+            // Render Planet di Bank/Pool
+            availablePlanets.forEach(p => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'pool-planet-btn';
+                btn.innerHTML = `<img src="${p.img}" alt="${p.name}" onerror="this.src='${p.fallback}'"> <span>${p.name}</span>`;
+                btn.onclick = () => placePlanetToNextSlot(p);
+                poolContainer.appendChild(btn);
+            });
+
+            if (availablePlanets.length === 0) {
+                poolContainer.innerHTML = '<span style="color: #64748b; font-size: 0.85rem; font-weight: bold; text-align: center; width: 100%;">Semua planet sudah dipasang! Tekan "Periksa" ya! 👇</span>';
+            }
+        }
+
+        function placePlanetToNextSlot(planet) {
+            const firstEmptyIndex = placedPlanets.indexOf(null);
+            if (firstEmptyIndex === -1) return;
+
+            placedPlanets[firstEmptyIndex] = planet;
+            availablePlanets = availablePlanets.filter(item => item.id !== planet.id);
+            renderOrderUI();
+        }
+
+        function returnPlanetToPool(slotIndex) {
+            const planet = placedPlanets[slotIndex];
+            if (!planet) return;
+
+            placedPlanets[slotIndex] = null;
+            availablePlanets.push(planet);
+            renderOrderUI();
+        }
+
+        function resetOrderGame() {
+            initOrderGame();
+        }
+
+        function checkOrderResult() {
+            if (placedPlanets.includes(null)) {
+                alert('Ayo pasang semua 8 planet ke dalam slot terlebih dahulu! 😊');
+                return;
+            }
+
+            const slots = document.querySelectorAll('.planet-slot');
+            let allCorrect = true;
+
+            placedPlanets.forEach((p, idx) => {
+                if (p.id === idx + 1) {
+                    slots[idx].classList.add('correct');
+                    slots[idx].classList.remove('wrong');
+                } else {
+                    slots[idx].classList.add('wrong');
+                    slots[idx].classList.remove('correct');
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+                }
+                showWinModal(
+                    'Luar Biasa!', 
+                    'Urutan 8 planetmu dari Matahari 100% tepat! Kamu resmi jadi Astronot Ahli! 🚀',
+                    initOrderGame
+                );
+            } else {
+                alert('Ada urutan yang masih belum tepat (kotak merah). Coba periksa lagi ya! Tetap semangat! 💪');
+            }
+        }
+
+        // ================= LOGIKA GAME 2: MEMORY PLANET =================
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let memoryMoves = 0;
+        let memorySeconds = 0;
+        let memoryTimerId = null;
+        let memoryGameActive = false;
+        let memoryLockBoard = false;
+
+        function formatMemoryTime(secs) {
+            const mins = Math.floor(secs / 60);
+            const remaining = secs % 60;
+            return mins + ':' + remaining.toString().padStart(2, '0');
+        }
+
+        function startMemoryTimer() {
+            if (memoryGameActive) return;
+            memoryGameActive = true;
+            memoryTimerId = setInterval(function() {
+                memorySeconds++;
+                document.getElementById('timer').textContent = formatMemoryTime(memorySeconds);
+            }, 1000);
+        }
+
+        function stopMemoryTimer() {
+            if (memoryTimerId) {
+                clearInterval(memoryTimerId);
+                memoryTimerId = null;
+            }
+            memoryGameActive = false;
+        }
+
+        function createMemoryCard(planet) {
+            const card = document.createElement('div');
+            card.className = 'memory-card';
+            card.dataset.id = planet.id;
+
+            const front = document.createElement('div');
+            front.className = 'card-side card-front';
+
+            const back = document.createElement('div');
+            back.className = 'card-side card-back';
+
+            const img = document.createElement('img');
+            img.src = planet.img;
+            img.alt = planet.name;
+            img.onerror = function() { this.src = planet.fallback; };
+
+            back.appendChild(img);
+            card.appendChild(front);
+            card.appendChild(back);
+
+            card.addEventListener('click', function() {
+                flipMemoryCard(this);
+            });
+
+            return card;
+        }
+
+        function flipMemoryCard(card) {
+            if (memoryLockBoard) return;
+            if (card.classList.contains('flipped')) return;
+            if (card.classList.contains('matched')) return;
+            if (flippedCards.length >= 2) return;
+
+            if (!memoryGameActive) startMemoryTimer();
+
+            card.classList.add('flipped');
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                memoryMoves++;
+                document.getElementById('moves').textContent = memoryMoves;
+                checkMemoryMatch();
+            }
+        }
+
+        function checkMemoryMatch() {
+            memoryLockBoard = true;
+            const card1 = flippedCards[0];
+            const card2 = flippedCards[1];
+            const isMatch = card1.dataset.id === card2.dataset.id;
+
+            if (isMatch) {
+                setTimeout(function() {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    document.getElementById('matches').textContent = matchedPairs + '/8';
+                    flippedCards = [];
+                    memoryLockBoard = false;
+
+                    if (matchedPairs === 8) {
+                        endMemoryGame();
+                    }
+                }, 400);
+            } else {
+                setTimeout(function() {
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                    memoryLockBoard = false;
+                }, 800);
+            }
+        }
+
+        function endMemoryGame() {
+            stopMemoryTimer();
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+            }
+            showWinModal(
+                'Hebat Sekali!',
+                `Kamu berhasil menemukan semua pasangan planet dalam ${memoryMoves} langkah dan waktu ${formatMemoryTime(memorySeconds)}!`,
+                initMemoryGame
+            );
+        }
+
+        function initMemoryGame() {
+            matchedPairs = 0;
+            memoryMoves = 0;
+            memorySeconds = 0;
+            flippedCards = [];
+            memoryLockBoard = false;
+            stopMemoryTimer();
+
+            document.getElementById('moves').textContent = '0';
+            document.getElementById('matches').textContent = '0/8';
+            document.getElementById('timer').textContent = '0:00';
+
+            const board = document.getElementById('memoryBoard');
+            board.innerHTML = '';
+
+            const allCards = shuffle([...planetList, ...planetList]);
+            for (let i = 0; i < allCards.length; i++) {
+                board.appendChild(createMemoryCard(allCards[i]));
+            }
+        }
+
+        // ================= MODAL KEMENANGAN =================
+        function showWinModal(title, text, replayCallback) {
+            document.getElementById('winModalTitle').textContent = title;
+            document.getElementById('winModalText').textContent = text;
+            document.getElementById('winModal').classList.add('show');
+            document.getElementById('overlay').classList.add('show');
+
+            const btn = document.getElementById('winModalActionBtn');
+            btn.onclick = function() {
+                closeWinModal();
+                if (replayCallback) replayCallback();
+            };
+        }
+
+        function closeWinModal() {
+            document.getElementById('winModal').classList.remove('show');
+            document.getElementById('overlay').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

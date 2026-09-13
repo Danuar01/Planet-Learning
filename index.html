@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Planet-Learning | Jelajahi Tata Surya</title>
+    <!-- Google Fonts Playful & Kartun -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cartoon-dark: #1e1b4b;
+            --cartoon-yellow: #ffd166;
+            --cartoon-pink: #ff3366;
+            --cartoon-blue: #3b82f6;
+            --cartoon-green: #06d6a0;
+            --cartoon-cyan: #00f2fe;
+            --comic-border: 3px solid var(--cartoon-dark);
+            --comic-shadow: 0 5px 0 var(--cartoon-dark);
+            --comic-shadow-sm: 0 3px 0 var(--cartoon-dark);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: radial-gradient(circle at 50% 20%, #311b92 0%, #150f42 55%, #090524 100%);
+            color: #ffffff;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        /* ===== BACKGROUND VIDEO & STARS ===== */
+        .video-bg {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -3; overflow: hidden;
+        }
+        .video-bg video {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.35; filter: saturate(1.8);
+        }
+        .video-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.25) 0%, rgba(15, 10, 40, 0.85) 100%);
+            z-index: -2;
+        }
+
+        .stars {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
+        }
+        .star {
+            position: absolute; background: #ffffff;
+            border-radius: 50%; animation: twinkle 2s infinite ease-in-out alternate;
+            box-shadow: 0 0 6px #ffffff, 0 0 10px var(--cartoon-cyan);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.6); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* ===== NAVBAR KHUSUS HP (RAPI, TIDAK DESAK-DESAKAN) ===== */
+        header {
+            position: fixed;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+
+        nav {
+            width: 100%;
+            max-width: 480px;
+            height: 52px;
+            padding: 0 16px;
+            background: linear-gradient(180deg, #ffea79 0%, #ffd166 100%);
+            border: var(--comic-border);
+            border-radius: 50px;
+            box-shadow: var(--comic-shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.15rem;
+            color: var(--cartoon-dark);
+            text-shadow: 1.5px 1.5px 0 #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+        .logo-icon {
+            font-size: 1.35rem;
+            animation: rocketWiggle 2.5s infinite ease-in-out;
+        }
+        @keyframes rocketWiggle {
+            0%, 100% { transform: rotate(-8deg); }
+            50% { transform: rotate(12deg); }
+        }
+
+        /* Tombol Hamburger di HP */
+        .menu-toggle {
+            background: #ffffff;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            color: var(--cartoon-dark);
+            cursor: pointer;
+            box-shadow: 0 2px 0 var(--cartoon-dark);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .menu-toggle:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        /* Mobile Menu Drawer */
+        .mobile-drawer {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(15, 10, 40, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .mobile-drawer.open {
+            display: flex;
+        }
+
+        .drawer-box {
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 26px;
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+            width: 100%;
+            max-width: 320px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+            position: relative;
+            animation: popModal 0.25s ease;
+        }
+        @keyframes popModal {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .drawer-box h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--cartoon-dark);
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
+
+        .drawer-box a {
+            text-decoration: none;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem;
+            color: var(--cartoon-dark);
+            background: #f8fafc;
+            border: 2px solid var(--cartoon-dark);
+            padding: 10px;
+            border-radius: 16px;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            transition: all 0.1s ease;
+        }
+        .drawer-box a.active, .drawer-box a:active {
+            background: var(--cartoon-yellow);
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--cartoon-dark);
+        }
+
+        .btn-close-drawer {
+            margin-top: 6px;
+            background: var(--cartoon-pink) !important;
+            color: #fff !important;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 16px;
+            padding: 8px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 16px 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            width: 100%;
+            max-width: 440px;
+            margin: 0 auto;
+        }
+        .hero-content.hide {
+            display: none;
+        }
+
+        .hero-fun-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--cartoon-pink);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.85rem;
+            border: 2.5px solid var(--cartoon-dark);
+            box-shadow: var(--comic-shadow-sm);
+            margin-bottom: 14px;
+            animation: bounce 2.2s infinite ease-in-out;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        .hero h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.3rem;
+            color: #ffffff;
+            line-height: 1.15;
+            text-shadow: 
+                -2.5px -2.5px 0 var(--cartoon-dark),
+                 2.5px -2.5px 0 var(--cartoon-dark),
+                -2.5px  2.5px 0 var(--cartoon-dark),
+                 2.5px  2.5px 0 var(--cartoon-dark),
+                 0 6px 0 var(--cartoon-dark);
+            margin-bottom: 14px;
+        }
+        .hero h1 span {
+            color: var(--cartoon-yellow);
+        }
+
+        .hero p {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #e0e7ff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            margin: 0 auto 26px;
+            line-height: 1.5;
+        }
+
+        .btn-primary {
+            background: linear-gradient(180deg, #10e3ab 0%, #06b587 100%);
+            color: #ffffff;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.15rem;
+            padding: 15px 32px;
+            border-radius: 40px;
+            border: var(--comic-border);
+            box-shadow: var(--comic-shadow);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 var(--cartoon-dark);
+        }
+
+        /* ===== SOLAR STAGE ===== */
+        .solar-reveal {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .solar-reveal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .solar-info h2 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            text-shadow: -2px -2px 0 var(--cartoon-dark), 2px -2px 0 var(--cartoon-dark), -2px 2px 0 var(--cartoon-dark), 2px 2px 0 var(--cartoon-dark), 0 4px 0 var(--cartoon-dark);
+            margin-bottom: 4px;
+        }
+        .solar-info p {
+            color: var(--cartoon-yellow);
+            font-size: 0.8rem;
+            font-weight: 800;
+            background: rgba(30, 27, 75, 0.85);
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 2px solid var(--cartoon-dark);
+            margin-bottom: 12px;
+        }
+
+        /* WADAH TATA SURYA YANG MENYESUAIKAN PERSIS LEBAR LAYAR HP */
+        .solar-scaler-wrapper {
+            position: relative;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+        }
+
+        .solar-system-container {
+            position: absolute;
+            width: 780px;
+            height: 780px;
+            background: radial-gradient(circle, rgba(67, 97, 238, 0.25) 0%, rgba(15, 10, 42, 0.9) 75%);
+            border: var(--comic-border);
+            border-radius: 50%;
+            box-shadow: var(--comic-shadow), inset 0 0 40px rgba(0, 0, 0, 0.6);
+            transform-origin: center center;
+            flex-shrink: 0;
+        }
+
+        /* MATAHARI */
+        .sun {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px; height: 120px;
+            z-index: 100; cursor: pointer;
+            border: var(--comic-border);
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fffbeb 0%, #facc15 50%, #f97316 100%);
+            box-shadow: 0 0 30px var(--cartoon-yellow), 0 5px 0 var(--cartoon-dark);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .sun img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ORBIT & PLANET */
+        .orbit {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2.5px dashed rgba(76, 201, 240, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .orbit-1 { width: 190px; height: 190px; }
+        .orbit-2 { width: 260px; height: 260px; }
+        .orbit-3 { width: 335px; height: 335px; }
+        .orbit-4 { width: 405px; height: 405px; }
+        .orbit-5 { width: 510px; height: 510px; }
+        .orbit-6 { width: 610px; height: 610px; }
+        .orbit-7 { width: 695px; height: 695px; }
+        .orbit-8 { width: 780px; height: 780px; }
+
+        .planet-orbit {
+            position: absolute; top: 50%; left: 50%;
+            width: 0; height: 0;
+            animation: rotateOrbit linear infinite;
+        }
+        @keyframes rotateOrbit {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .planet {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            animation: counterRotate linear infinite;
+            cursor: pointer;
+            border: 3px solid var(--cartoon-dark);
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 4px 0 var(--cartoon-dark);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        @keyframes counterRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+        .planet img { width: 100%; height: 100%; object-fit: contain; border-radius: 50%; }
+
+        .planet-label {
+            position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%);
+            margin-top: 4px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 13px; color: #ffffff;
+            white-space: nowrap; pointer-events: none;
+            background: rgba(30, 27, 75, 0.95);
+            padding: 2px 8px; border-radius: 12px;
+            border: 2px solid var(--cartoon-dark);
+        }
+
+        .mercury { width: 36px; height: 36px; left: 95px; }
+        .mercury-orbit, .mercury { animation-duration: 8s; }
+        .venus { width: 44px; height: 44px; left: 130px; }
+        .venus-orbit, .venus { animation-duration: 14s; }
+        .earth { width: 50px; height: 50px; left: 167px; }
+        .earth-orbit, .earth { animation-duration: 20s; }
+        .mars { width: 40px; height: 40px; left: 202px; }
+        .mars-orbit, .mars { animation-duration: 30s; }
+        .jupiter { width: 82px; height: 82px; left: 255px; }
+        .jupiter-orbit, .jupiter { animation-duration: 50s; }
+        .saturn { width: 70px; height: 70px; left: 305px; }
+        .saturn-orbit, .saturn { animation-duration: 70s; }
+        .saturn::after {
+            content: ''; position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotateX(75deg);
+            width: 185%; height: 185%;
+            border: 3.5px solid var(--cartoon-dark);
+            border-radius: 50%; pointer-events: none;
+            background: rgba(254, 240, 138, 0.5);
+            z-index: -1;
+        }
+        .uranus { width: 54px; height: 54px; left: 347px; }
+        .uranus-orbit, .uranus { animation-duration: 90s; }
+        .neptune { width: 50px; height: 50px; left: 390px; }
+        .neptune-orbit, .neptune { animation-duration: 110s; }
+
+        .moon {
+            position: absolute; width: 12px; height: 12px;
+            background: #f1f5f9; border: 2px solid var(--cartoon-dark);
+            border-radius: 50%; top: 50%; right: -16px;
+            animation: moonOrbit 3s linear infinite;
+        }
+        @keyframes moonOrbit { to { transform: rotate(360deg); } }
+
+        /* SOLAR CONTROLS */
+        .solar-controls {
+            display: flex; gap: 8px; margin-top: 14px;
+            flex-wrap: wrap; justify-content: center;
+            max-width: 380px;
+        }
+        .solar-btn {
+            padding: 8px 14px;
+            background: var(--cartoon-yellow);
+            color: var(--cartoon-dark);
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 30px; cursor: pointer;
+            font-family: 'Fredoka One', cursive; font-size: 0.85rem;
+            box-shadow: var(--comic-shadow-sm);
+            text-decoration: none;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .solar-btn:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+        .btn-restart-anim { background: var(--cartoon-cyan); }
+        .btn-explore { background: var(--cartoon-pink); color: #ffffff; }
+
+        /* ===== MODAL BOTTOM SHEET INFO PLANET (SUPER RAPI DI HP) ===== */
+        .panel-backdrop {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(15, 10, 42, 0.7);
+            z-index: 3000;
+            align-items: flex-end; /* Nempel di bawah layar HP */
+            justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+        .panel-backdrop.active {
+            display: flex;
+        }
+
+        .planet-info-panel {
+            background: #ffffff;
+            border-top: var(--comic-border);
+            border-left: var(--comic-border);
+            border-right: var(--comic-border);
+            border-bottom: none;
+            border-radius: 28px 28px 0 0;
+            padding: 16px 18px 24px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 85vh; /* Tidak boleh melebihi tinggi layar HP */
+            overflow-y: auto;
+            position: relative;
+            animation: slideSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 -8px 20px rgba(0,0,0,0.3);
+        }
+        @keyframes slideSheet {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* Garis abu-abu penanda modal bisa digeser */
+        .sheet-handle {
+            width: 44px; height: 5px;
+            background: #cbd5e1;
+            border-radius: 10px;
+            margin: 0 auto 12px;
+        }
+
+        .close-panel {
+            position: absolute; top: 14px; right: 16px;
+            width: 32px; height: 32px;
+            background: var(--cartoon-pink);
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 50%;
+            color: #ffffff;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 0 var(--cartoon-dark);
+        }
+
+        .panel-header-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .planet-info-image {
+            width: 75px; height: 75px;
+            border-radius: 50%;
+            border: 2.5px solid var(--cartoon-dark);
+            box-shadow: 0 3px 0 var(--cartoon-dark);
+            background: radial-gradient(circle, #e0f2fe 0%, #bae6fd 100%);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .planet-info-image img { width: 85%; height: 85%; object-fit: contain; }
+
+        .planet-title-box {
+            text-align: left;
+        }
+        .planet-info-name {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.5rem;
+            color: var(--cartoon-dark);
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+        .planet-subtitle {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #64748b;
+        }
+
+        .planet-info-desc {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #334155;
+            line-height: 1.45;
+            background: #f8fafc;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 2px dashed #cbd5e1;
+            margin-bottom: 14px;
+            text-align: left;
+        }
+
+        .planet-info-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .stat-item {
+            background: #fffbeb;
+            border: 2px solid var(--cartoon-dark);
+            border-radius: 12px;
+            padding: 8px 6px;
+            text-align: center;
+            box-shadow: 0 2.5px 0 var(--cartoon-dark);
+        }
+        .stat-item:nth-child(2) { background: #e0f2fe; }
+        .stat-item:nth-child(3) { background: #fce7f3; }
+        .stat-item:nth-child(4) { background: #dcfce7; }
+
+        .stat-label {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.7rem; color: #64748b;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.88rem; color: var(--cartoon-dark);
+            margin-top: 1px;
+        }
+
+        /* ===== MENU PETUALANGAN ===== */
+        .menu-section {
+            padding: 40px 16px 50px;
+            position: relative; z-index: 1;
+        }
+        .section-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.7rem;
+            text-align: center; margin-bottom: 22px;
+            color: #ffffff;
+            text-shadow: -2px -2px 0 var(--cartoon-dark), 2px -2px 0 var(--cartoon-dark), -2px 2px 0 var(--cartoon-dark), 2px 2px 0 var(--cartoon-dark), 0 5px 0 var(--cartoon-dark);
+        }
+        .menu-grid {
+            display: flex; flex-direction: column;
+            gap: 16px; max-width: 400px; margin: 0 auto;
+        }
+        .menu-card {
+            background: #ffffff; border: var(--comic-border);
+            border-radius: 20px; padding: 18px 16px 14px;
+            text-decoration: none; color: var(--cartoon-dark);
+            text-align: center; position: relative;
+            box-shadow: 0 6px 0 var(--cartoon-dark);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .menu-card::before {
+            content: ''; position: absolute;
+            top: -3px; left: -3px; right: -3px; height: 18px;
+            background: var(--card-color, var(--cartoon-pink));
+            border-radius: 16px 16px 0 0;
+            border: var(--comic-border);
+            border-bottom: none;
+        }
+        .menu-icon { font-size: 2.5rem; margin: 2px 0 4px; }
+        .menu-card h3 { font-family: 'Fredoka One', cursive; font-size: 1.2rem; margin-bottom: 3px; }
+        .menu-card p { color: #64748b; font-size: 0.88rem; font-weight: 800; line-height: 1.35; }
+
+        .menu-blue { --card-color: #38bdf8; }
+        .menu-pink { --card-color: #f43f5e; }
+        .menu-gray { --card-color: #a855f7; }
+
+        footer {
+            text-align: center; padding: 16px;
+            background: #ffffff; color: var(--cartoon-dark);
+            font-family: 'Fredoka One', cursive; font-size: 0.82rem;
+            border-top: var(--comic-border);
+        }
+    </style>
+</head>
+<body>
+
+<!-- VIDEO BACKGROUND -->
+<div class="video-bg">
+    <video autoplay muted loop playsinline>
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-star-field-in-space-2639-large.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+</div>
+
+<div class="stars" id="stars"></div>
+
+<!-- NAVBAR RAPI UNTUK HP -->
+<header>
+    <nav>
+        <a href="#" class="logo">
+            <span class="logo-icon">🚀</span>
+            <span>Planet-Learning</span>
+        </a>
+        <button class="menu-toggle" onclick="toggleMenuDrawer(true)">
+            <span>Menu</span> ☰
+        </button>
+    </nav>
+</header>
+
+<!-- POPUP DRAWER MENU HP -->
+<div class="mobile-drawer" id="mobileDrawer" onclick="closeDrawerOutside(event)">
+    <div class="drawer-box">
+        <h3>🪐 PILIH MENU</h3>
+        <a href="#" class="active" onclick="toggleMenuDrawer(false)">🏠 Beranda</a>
+        <a href="materi.html">📚 Belajar & Materi</a>
+        <a href="games.html">🎮 Arena Games</a>
+        <a href="info.html">ℹ️ Tentang Kami</a>
+        <button class="btn-close-drawer" onclick="toggleMenuDrawer(false)">Tutup ✕</button>
+    </div>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-content" id="heroContent">
+        <div class="hero-fun-tag">✨ Petualangan Angkasa Cilik</div>
+        <h1>JELAJAHI <br><span>TATA SURYA</span></h1>
+        <p>Temukan keajaiban alam semesta melalui pembelajaran interaktif tentang planet-planet!</p>
+        <button class="btn-primary" onclick="showSolarSystem()">🚀 Mulai Petualangan</button>
+    </div>
+    
+    <div class="solar-reveal" id="solarReveal">
+        <div class="solar-info">
+            <h2>🌌 TATA SURYA</h2>
+            <p>Sentuh salah satu planet! 👇</p>
+        </div>
+
+        <!-- Wadah Presisi Layar HP -->
+        <div class="solar-scaler-wrapper" id="solarScalerWrapper">
+            <div class="solar-system-container" id="solarContainer">
+                <div class="sun" onclick="showPlanetDetail('matahari')">
+                    <img src="assets/images/matahari.png" alt="Matahari" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Sun.png'">
+                    <div class="planet-label">Matahari</div>
+                </div>
+
+                <div class="orbit orbit-1"></div>
+                <div class="orbit orbit-2"></div>
+                <div class="orbit orbit-3"></div>
+                <div class="orbit orbit-4"></div>
+                <div class="orbit orbit-5"></div>
+                <div class="orbit orbit-6"></div>
+                <div class="orbit orbit-7"></div>
+                <div class="orbit orbit-8"></div>
+
+                <div class="planet-orbit mercury-orbit">
+                    <div class="planet mercury" onclick="showPlanetDetail('merkurius')">
+                        <img src="assets/images/merkurius.png" alt="Merkurius" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Full%20Moon.png'">
+                        <div class="planet-label">Merkurius</div>
+                    </div>
+                </div>
+                <div class="planet-orbit venus-orbit">
+                    <div class="planet venus" onclick="showPlanetDetail('venus')">
+                        <img src="assets/images/venus.png" alt="Venus" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/First%20Quarter%20Moon.png'">
+                        <div class="planet-label">Venus</div>
+                    </div>
+                </div>
+                <div class="planet-orbit earth-orbit">
+                    <div class="planet earth" onclick="showPlanetDetail('bumi')">
+                        <img src="assets/images/bumi.png" alt="Bumi" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Globe%20Showing%20Asia-Australia.png'">
+                        <div class="planet-label">Bumi</div>
+                        <div class="moon"></div>
+                    </div>
+                </div>
+                <div class="planet-orbit mars-orbit">
+                    <div class="planet mars" onclick="showPlanetDetail('mars')">
+                        <img src="assets/images/mars.png" alt="Mars" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Ringed%20Planet.png'">
+                        <div class="planet-label">Mars</div>
+                    </div>
+                </div>
+                <div class="planet-orbit jupiter-orbit">
+                    <div class="planet jupiter" onclick="showPlanetDetail('jupiter')">
+                        <img src="assets/images/jupiter.png" alt="Jupiter" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Sun%20Behind%20Cloud.png'">
+                        <div class="planet-label">Jupiter</div>
+                    </div>
+                </div>
+                <div class="planet-orbit saturn-orbit">
+                    <div class="planet saturn" onclick="showPlanetDetail('saturnus')">
+                        <img src="assets/images/saturnus.png" alt="Saturnus" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Ringed%20Planet.png'">
+                        <div class="planet-label">Saturnus</div>
+                    </div>
+                </div>
+                <div class="planet-orbit uranus-orbit">
+                    <div class="planet uranus" onclick="showPlanetDetail('uranus')">
+                        <img src="assets/images/uranus.png" alt="Uranus" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/New%20Moon.png'">
+                        <div class="planet-label">Uranus</div>
+                    </div>
+                </div>
+                <div class="planet-orbit neptune-orbit">
+                    <div class="planet neptune" onclick="showPlanetDetail('neptunus')">
+                        <img src="assets/images/neptunus.png" alt="Neptunus" onerror="this.src='https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Full%20Moon.png'">
+                        <div class="planet-label">Neptunus</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Kontrol Animasi -->
+        <div class="solar-controls">
+            <button class="solar-btn" id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+            <button class="solar-btn" id="speedBtn" onclick="changeSpeed()">⚡ Speed</button>
+            <button class="solar-btn btn-restart-anim" onclick="showHeroContent()">🏠 Kembali</button>
+            <a href="materi.html" class="solar-btn btn-explore">📚 Lanjut</a>
+        </div>
+    </div>
+</section>
+
+<!-- BOTTOM SHEET POPUP INFO PLANET -->
+<div class="panel-backdrop" id="panelBackdrop" onclick="closePlanetPanel(event)">
+    <div class="planet-info-panel" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <button class="close-panel" onclick="closePlanetPanel()">✕</button>
+        
+        <div class="panel-header-row">
+            <div class="planet-info-image">
+                <img id="panelPlanetImage" src="" alt="Planet">
+            </div>
+            <div class="planet-title-box">
+                <h3 class="planet-info-name" id="panelPlanetName">Nama Planet</h3>
+                <span class="planet-subtitle">Tata Surya Kita</span>
+            </div>
+        </div>
+
+        <p class="planet-info-desc" id="panelPlanetDesc">Deskripsi detail mengenai planet ini.</p>
+        
+        <div class="planet-info-stats">
+            <div class="stat-item">
+                <div class="stat-label">Jarak Orbit</div>
+                <div class="stat-value" id="panelStatJarak">-</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Diameter</div>
+                <div class="stat-value" id="panelStatDiameter">-</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Suhu Rata-rata</div>
+                <div class="stat-value" id="panelStatSuhu">-</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Kala Revolusi</div>
+                <div class="stat-value" id="panelStatOrbit">-</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MENU SECTION -->
+<section class="menu-section">
+    <h2 class="section-title">PETUALANGAN</h2>
+    <div class="menu-grid">
+        <a href="materi.html" class="menu-card menu-blue">
+            <span class="menu-icon">📚</span>
+            <h3>Materi & Kuis</h3>
+            <p>Pelajari tata surya, uji pengetahuan kuis, & bandingkan planet</p>
+        </a>
+        <a href="games.html" class="menu-card menu-pink">
+            <span class="menu-icon">🎮</span>
+            <h3>Arena Games</h3>
+            <p>Bermain urutkan planet & cocokkan kartu memori</p>
+        </a>
+        <a href="info.html" class="menu-card menu-gray">
+            <span class="menu-icon">ℹ️</span>
+            <h3>Tentang Kami</h3>
+            <p>Informasi lengkap website edukasi anak</p>
+        </a>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 Planet-Learning. Belajar jadi seru! 🚀✨</p>
+</footer>
+
+<script>
+    // Generator Bintang Latar
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 35; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.width = Math.random() * 3 + 1 + 'px';
+        star.style.height = star.style.width;
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 3 + 's';
+        starsContainer.appendChild(star);
+    }
+
+    // Toggle Menu Drawer di HP
+    function toggleMenuDrawer(isOpen) {
+        const drawer = document.getElementById('mobileDrawer');
+        if (isOpen) {
+            drawer.classList.add('open');
+        } else {
+            drawer.classList.remove('open');
+        }
+    }
+
+    function closeDrawerOutside(e) {
+        if (e.target === document.getElementById('mobileDrawer')) {
+            toggleMenuDrawer(false);
+        }
+    }
+
+    // Auto-Resize Ukuran Tata Surya Sesuai Lebar Layar Ponsel
+    function resizeSolarSystem() {
+        const wrapper = document.getElementById('solarScalerWrapper');
+        const container = document.getElementById('solarContainer');
+        if (!wrapper || !container) return;
+
+        // Ambil lebar viewport dikurangi margin sisi agar pas
+        const availableWidth = Math.min(window.innerWidth - 24, 780);
+        const scale = availableWidth / 780;
+
+        wrapper.style.width = availableWidth + 'px';
+        wrapper.style.height = availableWidth + 'px';
+        container.style.transform = `scale(${scale})`;
+    }
+
+    window.addEventListener('resize', resizeSolarSystem);
+    window.addEventListener('DOMContentLoaded', resizeSolarSystem);
+
+    // Data Planet Lengkap
+    const planetData = {
+        matahari: {
+            name: 'Matahari',
+            image: 'assets/images/matahari.png',
+            desc: '☀️ Pusat Tata Surya kita. Berupa bola plasma raksasa yang menghasilkan cahaya dan gravitasi penahan orbit.',
+            stats: { jarak: '0 km', diameter: '1.392.700 km', suhu: '5.500°C', orbit: '-' }
+        },
+        merkurius: {
+            name: 'Merkurius',
+            image: 'assets/images/merkurius.png',
+            desc: 'Planet terkecil dan paling dekat dengan Matahari. Permukaannya mirip seperti Bulan penuh kawah.',
+            stats: { jarak: '57,9 jt km', diameter: '4.879 km', suhu: '427°C', orbit: '88 hari' }
+        },
+        venus: {
+            name: 'Venus',
+            image: 'assets/images/venus.png',
+            desc: 'Planet terpanas di Tata Surya akibat efek rumah kaca ekstrem dari atmosfer karbon dioksidanya.',
+            stats: { jarak: '108,2 jt km', diameter: '12.104 km', suhu: '465°C', orbit: '225 hari' }
+        },
+        bumi: {
+            name: 'Bumi',
+            image: 'assets/images/bumi.png',
+            desc: 'Satu-satunya rumah kehidupan yang dipenuhi air dan atmosfer oksigen pelindung.',
+            stats: { jarak: '149,6 jt km', diameter: '12.742 km', suhu: '15°C', orbit: '365 hari' }
+        },
+        mars: {
+            name: 'Mars',
+            image: 'assets/images/mars.png',
+            desc: 'Dijuluki Planet Merah karena tanahnya banyak mengandung karat besi dan beriklim dingin gurun.',
+            stats: { jarak: '227,9 jt km', diameter: '6.779 km', suhu: '-63°C', orbit: '687 hari' }
+        },
+        jupiter: {
+            name: 'Jupiter',
+            image: 'assets/images/jupiter.png',
+            desc: 'Planet raksasa gas terbesar dengan badai merah raksasa yang sudah berputar ratusan tahun.',
+            stats: { jarak: '778,5 jt km', diameter: '139.820 km', suhu: '-108°C', orbit: '11,9 thn' }
+        },
+        saturnus: {
+            name: 'Saturnus',
+            image: 'assets/images/saturnus.png',
+            desc: 'Planet yang sangat menawan karena memiliki cincin spektakuler berbahan bongkahan es dan debu.',
+            stats: { jarak: '1,43 M km', diameter: '116.460 km', suhu: '-139°C', orbit: '29,5 thn' }
+        },
+        uranus: {
+            name: 'Uranus',
+            image: 'assets/images/uranus.png',
+            desc: 'Raksasa es berwarna toska yang berputar miring hampir menggelinding di porosnya.',
+            stats: { jarak: '2,87 M km', diameter: '50.724 km', suhu: '-197°C', orbit: '84 thn' }
+        },
+        neptunus: {
+            name: 'Neptunus',
+            image: 'assets/images/neptunus.png',
+            desc: 'Planet terluar berwarna biru pekat yang selalu dilanda angin topan supersonik.',
+            stats: { jarak: '4,5 M km', diameter: '49.244 km', suhu: '-201°C', orbit: '165 thn' }
+        }
+    };
+
+    function showSolarSystem() {
+        document.getElementById('heroContent').classList.add('hide');
+        document.getElementById('solarReveal').classList.add('active');
+        resizeSolarSystem();
+    }
+
+    function showHeroContent() {
+        document.getElementById('solarReveal').classList.remove('active');
+        document.getElementById('heroContent').classList.remove('hide');
+    }
+
+    // Tampilkan Bottom Sheet Popup Saat Planet Diklik
+    function showPlanetDetail(planetKey) {
+        const data = planetData[planetKey];
+        if (!data) return;
+
+        const imgEl = document.getElementById('panelPlanetImage');
+        imgEl.src = data.image;
+        imgEl.onerror = () => {
+            imgEl.src = 'https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Travel%20and%20places/Ringed%20Planet.png';
+        };
+
+        document.getElementById('panelPlanetName').textContent = data.name;
+        document.getElementById('panelPlanetDesc').textContent = data.desc;
+        document.getElementById('panelStatJarak').textContent = data.stats.jarak;
+        document.getElementById('panelStatDiameter').textContent = data.stats.diameter;
+        document.getElementById('panelStatSuhu').textContent = data.stats.suhu;
+        document.getElementById('panelStatOrbit').textContent = data.stats.orbit;
+
+        document.getElementById('panelBackdrop').classList.add('active');
+    }
+
+    function closePlanetPanel(e) {
+        if (!e || e.target === document.getElementById('panelBackdrop') || e.target.classList.contains('close-panel')) {
+            document.getElementById('panelBackdrop').classList.remove('active');
+        }
+    }
+
+    // Kontrol Kecepatan & Pause
+    let isPaused = false;
+    let speedMultiplier = 1;
+
+    function togglePause() {
+        isPaused = !isPaused;
+        const state = isPaused ? 'paused' : 'running';
+        document.querySelectorAll('.planet-orbit, .planet, .moon').forEach(el => el.style.animationPlayState = state);
+        document.getElementById('pauseBtn').textContent = isPaused ? '▶ Play' : '⏸ Pause';
+    }
+
+    function changeSpeed() {
+        speedMultiplier = speedMultiplier === 1 ? 3 : (speedMultiplier === 3 ? 5 : 1);
+        document.querySelectorAll('.planet-orbit, .planet').forEach(el => {
+            if (!el.dataset.baseDuration) el.dataset.baseDuration = getComputedStyle(el).animationDuration;
+            const base = parseFloat(el.dataset.baseDuration);
+            el.style.animationDuration = (base / speedMultiplier) + 's';
+        });
+        document.getElementById('speedBtn').textContent = speedMultiplier === 1 ? '⚡ Speed' : '⚡ ' + speedMultiplier + 'x';
+    }
+</script>
+</body>
+</html>

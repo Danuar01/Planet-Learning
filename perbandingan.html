@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perbandingan Planet | Planet-Learning</title>
+    <!-- Google Fonts Playful & Kartun -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cartoon-dark: #1e1b4b;
+            --cartoon-yellow: #ffd166;
+            --cartoon-pink: #ff3366;
+            --cartoon-blue: #3b82f6;
+            --cartoon-green: #06d6a0;
+            --cartoon-cyan: #00f2fe;
+            --cartoon-orange: #ff9f1c;
+            --cartoon-purple: #8b5cf6;
+            --comic-border: 4px solid var(--cartoon-dark);
+            --comic-shadow: 0 8px 0 var(--cartoon-dark);
+            --comic-shadow-sm: 0 4px 0 var(--cartoon-dark);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: radial-gradient(circle at 50% 20%, #311b92 0%, #150f42 55%, #090524 100%);
+            color: #ffffff;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* ===== BACKGROUND VIDEO & DEKORASI KOSMIK CERIA ===== */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -3;
+            overflow: hidden;
+        }
+        .video-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.35;
+            filter: saturate(1.8);
+        }
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.25) 0%, rgba(15, 10, 40, 0.75) 100%);
+            z-index: -2;
+        }
+
+        .cosmic-clouds {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .nebula-puff {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.32;
+            animation: cloudFloat 18s ease-in-out infinite alternate;
+        }
+        .puff-1 {
+            width: 460px;
+            height: 460px;
+            background: #ec4899;
+            top: -80px;
+            left: -120px;
+        }
+        .puff-2 {
+            width: 520px;
+            height: 520px;
+            background: #06b6d4;
+            bottom: 5%;
+            right: -140px;
+            animation-duration: 22s;
+        }
+
+        @keyframes cloudFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 40px) scale(1.15); }
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out alternate;
+            box-shadow: 0 0 8px #ffffff, 0 0 15px var(--cartoon-cyan);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.6); }
+            100% { opacity: 1; transform: scale(1.3); }
+        }
+
+        /* ===== NAVIGATION BAR (3D GAME PILL STYLE) ===== */
+        nav {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 1160px;
+            padding: 12px 28px;
+            background: linear-gradient(180deg, #ffea79 0%, #ffd166 100%);
+            border: var(--comic-border);
+            border-radius: 50px;
+            box-shadow: var(--comic-shadow), 0 16px 25px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .logo {
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.6rem;
+            color: var(--cartoon-dark);
+            text-shadow: 2px 2px 0 #ffffff;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+        .logo-icon {
+            font-size: 1.8rem;
+            display: inline-block;
+            animation: rocketWiggle 2.5s infinite ease-in-out;
+        }
+        @keyframes rocketWiggle {
+            0%, 100% { transform: rotate(-8deg); }
+            50% { transform: rotate(12deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-links a {
+            color: var(--cartoon-dark);
+            text-decoration: none;
+            font-family: 'Fredoka One', cursive;
+            font-size: 0.95rem;
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: 3px solid transparent;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+        .nav-links a:hover, .nav-links a.active {
+            background: #ffffff;
+            border-color: var(--cartoon-dark);
+            box-shadow: 0 4px 0 var(--cartoon-dark);
+            transform: translateY(-2px);
+            color: var(--cartoon-dark);
+        }
+
+        /* ===== CONTENT PAGE LAYOUT ===== */
+        .content-page {
+            padding: 140px 20px 80px;
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+        .content-container {
+            max-width: 1060px;
+            margin: 0 auto;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--cartoon-pink);
+            color: #ffffff;
+            padding: 7px 22px;
+            border-radius: 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.05rem;
+            border: 3px solid var(--cartoon-dark);
+            box-shadow: var(--comic-shadow-sm);
+            margin-bottom: 16px;
+            animation: bounceBadge 2.4s infinite ease-in-out;
+        }
+        @keyframes bounceBadge {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .page-header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: clamp(2.3rem, 5.5vw, 3.6rem);
+            color: #ffffff;
+            text-shadow: 
+                -3px -3px 0 var(--cartoon-dark),
+                 3px -3px 0 var(--cartoon-dark),
+                -3px  3px 0 var(--cartoon-dark),
+                 3px  3px 0 var(--cartoon-dark),
+                 0 8px 0 var(--cartoon-dark),
+                 0 15px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .page-header p {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #e0e7ff;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+            max-width: 620px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* ===== WADAH PERBANDINGAN 3D KARTUN ===== */
+        .compare-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: var(--comic-border);
+            border-radius: 36px;
+            padding: 45px 35px;
+            box-shadow: 0 14px 0 var(--cartoon-dark), 0 25px 35px rgba(0, 0, 0, 0.35);
+            position: relative;
+        }
+
+        .compare-container::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            height: 32px;
+            background: var(--cartoon-cyan);
+            border-radius: 32px 32px 0 0;
+            border: var(--comic-border);
+            border-bottom: none;
+            z-index: 0;
+        }
+
+        /* ===== AREA SELECTOR & VS BADGE ===== */
+        .compare-selectors {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 35px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .compare-selectors select {
+            width: 100%;
+            padding: 16px 20px;
+            background: #f8fafc;
+            color: var(--cartoon-dark);
+            border: 3.5px solid var(--cartoon-dark);
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: 'Fredoka One', cursive;
+            box-shadow: 0 5px 0 var(--cartoon-dark);
+            transition: all 0.15s ease;
+            outline: none;
+        }
+
+        .compare-selectors select:hover {
+            background: #e0f2fe;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 var(--cartoon-dark);
+        }
+
+        .compare-selectors select:focus {
+            background: #e0f2fe;
+            border-color: var(--cartoon-dark);
+        }
+
+        .vs-badge {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffd166 0%, #ff3366 100%);
+            border: 3.5px solid var(--cartoon-dark);
+            box-shadow: 0 5px 0 var(--cartoon-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.6rem;
+            color: #ffffff;
+            text-shadow: 2px 2px 0 var(--cartoon-dark);
+            animation: pulseVS 2.5s infinite ease-in-out;
+            margin: 0 auto;
+        }
+
+        @keyframes pulseVS {
+            0%, 100% { transform: scale(1) rotate(-5deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        /* ===== HASIL PERBANDINGAN PLANET ===== */
+        .compare-result {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .compare-planet {
+            text-align: center;
+            padding: 30px 22px;
+            border-radius: 28px;
+            background: #f8fafc;
+            border: 3.5px solid var(--cartoon-dark);
+            box-shadow: 0 6px 0 var(--cartoon-dark);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .compare-planet:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 11px 0 var(--cartoon-dark);
+            background: #ffffff;
+        }
+
+        .compare-planet img {
+            width: 160px;
+            height: 160px;
+            object-fit: contain;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            background: #ffffff;
+            border: 3px solid var(--cartoon-dark);
+            box-shadow: 0 4px 0 var(--cartoon-dark);
+            padding: 8px;
+            animation: planetFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes planetFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .compare-planet h3 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.1rem;
+            margin-bottom: 20px;
+            color: var(--cartoon-dark);
+            letter-spacing: 0.5px;
+        }
+
+        .compare-stats {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .compare-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 0 rgba(30, 27, 75, 0.08);
+            transition: all 0.15s ease;
+        }
+
+        .compare-stat:hover {
+            border-color: var(--cartoon-blue);
+            transform: translateX(3px);
+        }
+
+        .compare-stat span:first-child {
+            color: #64748b;
+            font-family: 'Fredoka One', cursive;
+            font-weight: 400;
+            font-size: 0.95rem;
+        }
+
+        .compare-stat span:last-child {
+            color: var(--cartoon-dark);
+            font-weight: 800;
+            font-size: 1rem;
+            background: #fffbeb;
+            border: 2px solid var(--cartoon-dark);
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 35px 20px;
+            background: #ffffff;
+            color: var(--cartoon-dark);
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.15rem;
+            border-top: var(--comic-border);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 -8px 0 rgba(0, 0, 0, 0.15);
+            margin-top: 50px;
+        }
+
+        /* ===== RESPONSIVE UNTUK MOBILE & TABLET ===== */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                width: 94%;
+                padding: 12px;
+                top: 10px;
+                border-radius: 30px;
+            }
+            .nav-links { gap: 6px; }
+            .nav-links a { font-size: 0.85rem; padding: 6px 12px; }
+            .content-page { padding-top: 175px; }
+            .compare-container { padding: 35px 20px; }
+            .compare-selectors { grid-template-columns: 1fr; gap: 14px; }
+            .vs-badge { width: 55px; height: 55px; font-size: 1.3rem; }
+            .compare-result { grid-template-columns: 1fr; gap: 20px; }
+            .compare-planet img { width: 130px; height: 130px; }
+            .compare-planet h3 { font-size: 1.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- VIDEO BACKGROUND -->
+    <div class="video-bg">
+        <video autoplay muted loop playsinline>
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-star-field-in-space-2639-large.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- AWAN KOSMIK KARTUN -->
+    <div class="cosmic-clouds">
+        <div class="nebula-puff puff-1"></div>
+        <div class="nebula-puff puff-2"></div>
+    </div>
+
+    <!-- STARS BACKGROUND -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- NAVBAR (3D KIDS GAME PILL) -->
+    <nav>
+        <div class="logo">
+            <span class="logo-icon">🚀</span>
+            <span>Planet-Learning</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">🏠 Beranda</a></li>
+            <li><a href="materi.html">📚 Materi</a></li>
+            <li><a href="kuis.html">🧠 Kuis</a></li>
+            <li><a href="games.html">🎮 Games</a></li>
+            <li><a href="perbandingan.html" class="active">⚖️ Bandingkan</a></li>
+            <li><a href="info.html">ℹ️ Info</a></li>
+        </ul>
+    </nav>
+
+    <div class="content-page">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="header-badge">⚖️ Arena Timbang Planet</div>
+                <h1>PERBANDINGAN PLANET</h1>
+                <p>Pilih dua planet untuk melihat perbedaan ukuran, suhu, dan keunikan mereka!</p>
+            </div>
+
+            <div class="compare-container">
+                <div class="compare-selectors">
+                    <select id="planet1" onchange="updateCompare()">
+                        <option value="0">Merkurius</option>
+                        <option value="1">Venus</option>
+                        <option value="2" selected>Bumi</option>
+                        <option value="3">Mars</option>
+                        <option value="4">Jupiter</option>
+                        <option value="5">Saturnus</option>
+                        <option value="6">Uranus</option>
+                        <option value="7">Neptunus</option>
+                    </select>
+
+                    <div class="vs-badge">VS</div>
+
+                    <select id="planet2" onchange="updateCompare()">
+                        <option value="0">Merkurius</option>
+                        <option value="1">Venus</option>
+                        <option value="2">Bumi</option>
+                        <option value="3" selected>Mars</option>
+                        <option value="4">Jupiter</option>
+                        <option value="5">Saturnus</option>
+                        <option value="6">Uranus</option>
+                        <option value="7">Neptunus</option>
+                    </select>
+                </div>
+
+                <div class="compare-result" id="compareResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Planet-Learning. Belajar jadi lebih menyenangkan! 🚀✨</p>
+    </footer>
+
+    <script>
+        // Generator Bintang Berkedip (Sama persis dengan halaman lain)
+        const starsContainer = document.getElementById('stars');
+        if (starsContainer) {
+            for (let i = 0; i < 90; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Data planet dengan gambar asli
+        const planetsData = [
+            { 
+                name: 'Merkurius', 
+                img: 'assets/images/merkurius.png',
+                stats: { 
+                    diameter: '4.879 km', 
+                    suhu: '-173°C s/d 427°C', 
+                    satelit: '0 Bulan', 
+                    hari: '59 hari',
+                    jarak: '57,9 juta km'
+                } 
+            },
+            { 
+                name: 'Venus', 
+                img: 'assets/images/venus.png',
+                stats: { 
+                    diameter: '12.104 km', 
+                    suhu: '465°C', 
+                    satelit: '0 Bulan', 
+                    hari: '243 hari',
+                    jarak: '108,2 juta km'
+                } 
+            },
+            { 
+                name: 'Bumi', 
+                img: 'assets/images/bumi.png',
+                stats: { 
+                    diameter: '12.742 km', 
+                    suhu: '-88°C s/d 58°C', 
+                    satelit: '1 (Bulan)', 
+                    hari: '24 jam',
+                    jarak: '149,6 juta km'
+                } 
+            },
+            { 
+                name: 'Mars', 
+                img: 'assets/images/mars.png',
+                stats: { 
+                    diameter: '6.779 km', 
+                    suhu: '-140°C s/d 20°C', 
+                    satelit: '2 Bulan', 
+                    hari: '24,6 jam',
+                    jarak: '227,9 juta km'
+                } 
+            },
+            { 
+                name: 'Jupiter', 
+                img: 'assets/images/jupiter.png',
+                stats: { 
+                    diameter: '139.820 km', 
+                    suhu: '-108°C', 
+                    satelit: '95+ Bulan', 
+                    hari: '9,9 jam',
+                    jarak: '778,5 juta km'
+                } 
+            },
+            { 
+                name: 'Saturnus', 
+                img: 'assets/images/saturnus.png',
+                stats: { 
+                    diameter: '116.460 km', 
+                    suhu: '-139°C', 
+                    satelit: '146+ Bulan', 
+                    hari: '10,7 jam',
+                    jarak: '1,43 miliar km'
+                } 
+            },
+            { 
+                name: 'Uranus', 
+                img: 'assets/images/uranus.png',
+                stats: { 
+                    diameter: '50.724 km', 
+                    suhu: '-197°C', 
+                    satelit: '27 Bulan', 
+                    hari: '17,2 jam',
+                    jarak: '2,87 miliar km'
+                } 
+            },
+            { 
+                name: 'Neptunus', 
+                img: 'assets/images/neptunus.png',
+                stats: { 
+                    diameter: '49.244 km', 
+                    suhu: '-201°C', 
+                    satelit: '14 Bulan', 
+                    hari: '16,1 jam',
+                    jarak: '4,5 miliar km'
+                } 
+            }
+        ];
+
+        function updateCompare() {
+            const p1Index = document.getElementById('planet1').value;
+            const p2Index = document.getElementById('planet2').value;
+            const p1 = planetsData[p1Index];
+            const p2 = planetsData[p2Index];
+            
+            const resultContainer = document.getElementById('compareResult');
+            resultContainer.innerHTML = `
+                <div class="compare-planet">
+                    <img src="${p1.img}" alt="${p1.name}" onerror="this.src=''">
+                    <h3>${p1.name}</h3>
+                    <div class="compare-stats">
+                        <div class="compare-stat">
+                            <span>🚀 Jarak Matahari</span>
+                            <span>${p1.stats.jarak}</span>
+                        </div>
+                        <div class="compare-stat">
+                            <span>📏 Diameter</span>
+                            <span>${p1.stats.diameter}</span>
+                        </div>
+                        <div class="compare-stat">
+                            <span>🌡️ Suhu</span>
+                            <span>${p1.stats.suhu}</span>
+                        </div>
+                        <div class="compare-stat">
+                            <span>🌙 Jumlah Bulan</span>
+                            <span>${p1.stats.satelit}</span>
+                        </div>
+                        <div class="compare-stat">
+                            <span>⏱️ 1 Kali Rotasi</span>
+                            <span>${p1.stats.hari}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="compare-planet">
+                    <img src="${p2.img}" alt="${p2.name}" onerror="this.src=''">
+                    <h3>${p2.name}</h3>
+                    <div class="compare-stats">
+                        <div class="compare-stat">
+                            <span>🚀 Jarak Matahari</span>
+                            <span>${p2.stats.jarak}</span>
+                        </div>
+                        <div class="compare-stat">
+                            <span>📏 Diameter</span>
+                            <span>${p2.stats.diameter}</span>
+                        </div>
+                        <div class="compare-stat">
+                            <span>🌡️ Suhu</span>
+                            <span>${p2.stats.suhu}</span>
+                        </div>
+                        <div class="compare-stat">
+                            <span>🌙 Jumlah Bulan</span>
+                            <span>${p2.stats.satelit}</span>
+                        </div>
+                        <div class="compare-stat">
+                            <span>⏱️ 1 Kali Rotasi</span>
+                            <span>${p2.stats.hari}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Jalankan perbandingan awal saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', updateCompare);
+    </script>
+</body>
+</html>
